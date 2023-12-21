@@ -6,11 +6,12 @@ dotenv: [.env]
 env:
   APP_NAME: main
   TEMP_DIR: ./tmp
+  BUILD_DIR: ./cmd/web
 
 tasks:
   build:
     cmds:
-      - go build -o  $TEMP_DIR/$APP_NAME    .
+      - go build -o  $TEMP_DIR/$APP_NAME    $BUILD_DIR
   run:
     deps: [build]
     cmds:
