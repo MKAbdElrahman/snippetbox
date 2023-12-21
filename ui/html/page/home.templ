@@ -1,39 +1,12 @@
 package page
 
+import "snippetbox/ui/html"
+
 templ Home() {
-	<!DOCTYPE html>
-	<html lang="en">
-		<head>
-			<meta charset="utf-8"/>
-			<title>Home - Snippetbox</title>
-		</head>
-		@header()
-		@body() {
-			@main()
-		}
-		@footer()
-	</html>
-}
-
-templ header() {
-	<header>
-		<h1><a href="/">Snippetbox</a></h1>
-	</header>
-}
-
-templ footer() {
-	<footer>Powered by <a href="https://golang.org/">Go</a></footer>
-}
-
-templ main() {
-	<main>
+	@html.Base(html.RootLayoutData{
+		Titel: "Home - Snippetbox",
+	}) {
 		<h2>Latest Snippets</h2>
 		<p>There's nothing to see here yet!</p>
-	</main>
-}
-
-templ body() {
-	<body>
-		{ children... }
-	</body>
+	}
 }
