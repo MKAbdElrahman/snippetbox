@@ -1,7 +1,5 @@
 version: 3
 
-
-
 dotenv: [.env]
 env:
   APP_NAME: main
@@ -9,7 +7,11 @@ env:
   BUILD_DIR: ./cmd/web
 
 tasks:
+  templ-generate:
+    cmds:
+      - templ generate
   build:
+    deps: [templ-generate]
     cmds:
       - go build -o  $TEMP_DIR/$APP_NAME    $BUILD_DIR
   run:

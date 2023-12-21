@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"snippetbox/ui/html/page"
 	"strconv"
 )
 
@@ -12,7 +13,14 @@ func home(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	w.Write([]byte("Hello from Snippetbox"))
+
+	err := page.Home().Render(r.Context(), w)
+
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
+
 }
 
 func snippetView(w http.ResponseWriter, r *http.Request) {
