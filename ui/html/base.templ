@@ -10,7 +10,6 @@ templ Base(data RootLayoutData) {
 	<!DOCTYPE html>
 	<html lang="en">
 		@head(data.Titel)
-		@header()
 		@body() {
 			@partial.Nav()
 			<main>
@@ -25,24 +24,37 @@ templ head(title string) {
 	<head>
 		<meta charset="utf-8"/>
 		<title>{ title }</title>
-		<link rel="stylesheet" href="/static/css/main.css"/>
+		// <link rel="stylesheet" href="/static/css/main.css"/>
+		<script src="https://cdn.tailwindcss.com"></script>
+		@configTailwind()
 		<link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon"/>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700"/>
 	</head>
 }
 
-templ header() {
-	<header>
-		<h1><a href="/">Snippetbox</a></h1>
-	</header>
-}
-
 templ footer() {
-	<footer>Powered by <a href="https://golang.org/">Go</a></footer>
+	<div>
+		<footer class="mt-8 p-4 bg-gray-800 text-white text-center">
+			Powered by <a href="https://golang.org/" class="underline">Go</a>
+		</footer>
+	</div>
 }
 
 templ body() {
-	<body>
+	<body class="bg-gray-100">
 		{ children... }
 	</body>
+}
+
+templ configTailwind() {
+	<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+          }
+        }
+      }
+    }
+  </script>
 }
