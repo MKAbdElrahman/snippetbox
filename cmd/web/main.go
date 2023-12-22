@@ -3,8 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
+	"os"
+	"snippetbox/foundation/logger"
 
 	"github.com/ardanlabs/conf/v3"
 )
@@ -29,11 +30,30 @@ func main() {
 		if errors.Is(err, conf.ErrHelpWanted) {
 			fmt.Println(help)
 			return
+		} else {
+			fmt.Printf("parsing config: %v", err)
+			os.Exit(1)
 		}
-		log.Fatalf("parsing config: %v", err)
 	}
 
+	logger := logger.NewStdLogger()
+
 	mux := http.NewServeMux()
+	RegisterRoutes(mux)
+
+	server := http.Server{
+		Handler: mux,
+		Addr:    cfg.Web.Host,
+	}
+
+	logger.Info("starting server", map[string]any{"Host": cfg.Web.Host})
+	err = server.ListenAndServe()
+	if err != nil {
+		logger.Error("server is not listening")
+	}
+}
+
+func RegisterRoutes(mux *http.ServeMux) {
 
 	fileServer := http.FileServer(http.Dir("./ui/assets/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
@@ -41,10 +61,4 @@ func main() {
 	mux.HandleFunc("/", home)
 	mux.HandleFunc("/snippet/view", snippetView)
 	mux.HandleFunc("/snippet/create", snippetCreate)
-
-	log.Println("starting server on addr:", cfg.Web.Host)
-	err = http.ListenAndServe(cfg.Web.Host, mux)
-	if err != nil {
-		log.Fatal(err)
-	}
 }
