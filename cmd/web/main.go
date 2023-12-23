@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 	"snippetbox/foundation/logger"
+	"snippetbox/home"
+	"snippetbox/snippet"
 
 	"github.com/ardanlabs/conf/v3"
 )
@@ -44,9 +46,8 @@ func main() {
 		logger.WithLineSource(true, logger.ErrorLevel, logger.InfoLevel),
 	)
 
-	logger.Error("test")
 	mux := http.NewServeMux()
-	RegisterRoutes(mux)
+	RegisterRoutes(mux, logger)
 
 	server := http.Server{
 		Handler: mux,
@@ -60,12 +61,15 @@ func main() {
 	}
 }
 
-func RegisterRoutes(mux *http.ServeMux) {
+func RegisterRoutes(mux *http.ServeMux, logger *logger.Logger) {
+
+	snippetHandler := snippet.NewHandler(logger)
+	homeHander := home.NewHandler(logger)
 
 	fileServer := http.FileServer(http.Dir("./ui/assets/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet/view", snippetView)
-	mux.HandleFunc("/snippet/create", snippetCreate)
+	mux.HandleFunc("/", homeHander.HandleRenderFullPage)
+	mux.HandleFunc("/snippet/view", snippetHandler.HandleView)
+	mux.HandleFunc("/snippet/create", snippetHandler.HandleCreate)
 }
