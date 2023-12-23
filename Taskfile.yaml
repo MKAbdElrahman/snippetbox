@@ -7,6 +7,9 @@ env:
   BUILD_DIR: ./cmd/web
 
 tasks:
+  mysql-up: docker compose  -f  ./mysql/docker-compose.yaml up -d
+  mysql-down: docker compose  -f  ./mysql/docker-compose.yaml down
+
   templ-generate:
     cmds:
       - templ generate
