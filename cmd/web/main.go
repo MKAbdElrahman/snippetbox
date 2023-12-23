@@ -36,8 +36,15 @@ func main() {
 		}
 	}
 
-	logger := logger.NewStdLogger()
+	logger := logger.NewLogger(
+		logger.WithStderr(os.Stderr),
+		logger.WithStdout(os.Stdout),
+		logger.WithDate(true, logger.ErrorLevel, logger.InfoLevel),
+		logger.WithTime(true, logger.InfoLevel, logger.ErrorLevel),
+		logger.WithLineSource(true, logger.ErrorLevel, logger.InfoLevel),
+	)
 
+	logger.Error("test")
 	mux := http.NewServeMux()
 	RegisterRoutes(mux)
 
