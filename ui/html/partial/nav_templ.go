@@ -32,7 +32,7 @@ func Nav() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("--><a href=\"/\" class=\"text-white text-lg font-semibold\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("--><a hx-get=\"/\" hx-target=\"body\" class=\"text-white text-lg font-semibold\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -50,7 +50,7 @@ func Nav() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("--><div class=\"space-x-4\"><a href=\"/\" class=\"text-white\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("--><div class=\"space-x-4\"><a href=\"/\" hx-get=\"/\" hx-target=\"body\" class=\"text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

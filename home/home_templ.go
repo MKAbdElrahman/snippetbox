@@ -31,7 +31,7 @@ func HomePage() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container mx-auto mt-8\"><h2 class=\"text-2xl font-semibold\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container mx-auto mt-8 text-center\"><h2 class=\"text-3xl font-extrabold text-gray-800 mb-6\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -40,16 +40,7 @@ func HomePage() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2><p>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Var4 := `There's nothing to see here yet!`
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h2><div hx-get=\"/snippet/latest\" hx-swap=\"outerHTML\" hx-target=\"this\" hx-trigger=\"revealed\"></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -59,7 +50,8 @@ func HomePage() templ.Component {
 			return templ_7745c5c3_Err
 		})
 		templ_7745c5c3_Err = html.Base(html.RootLayoutData{
-			Titel: "Home - Snippetbox",
+			Titel:     "Home - Snippetbox",
+			BodyClass: "bg-gray-100  min-h-screen font-sans",
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

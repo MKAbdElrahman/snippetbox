@@ -77,6 +77,7 @@ func (h *SnippetHandler) HandleLatest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, snippet := range snippets {
-		fmt.Fprintf(w, "%+v\n", snippet)
+		data := NewViewData(snippet)
+		View(data).Render(r.Context(), w)
 	}
 }

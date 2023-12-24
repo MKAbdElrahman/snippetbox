@@ -3,14 +3,15 @@ package  html
 import "snippetbox/ui/html/partial"
 
 type RootLayoutData struct {
-	Titel string
+	Titel     string
+	BodyClass string
 }
 
 templ Base(data RootLayoutData) {
 	<!DOCTYPE html>
 	<html lang="en">
 		@head(data.Titel)
-		@body() {
+		@body(data.BodyClass) {
 			@partial.Nav()
 			<main>
 				{ children... }
@@ -29,6 +30,7 @@ templ head(title string) {
 		@configTailwind()
 		<link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon"/>
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700"/>
+		<script src="/static/js/htmx.min.js"></script>
 	</head>
 }
 
@@ -40,8 +42,8 @@ templ footer() {
 	</div>
 }
 
-templ body() {
-	<body class="bg-gray-100">
+templ body(c string) {
+	<body class={ c }>
 		{ children... }
 	</body>
 }
