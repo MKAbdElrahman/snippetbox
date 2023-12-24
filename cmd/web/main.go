@@ -27,6 +27,7 @@ func main() {
 			Dsn string `conf:"default:user:password@/snippetbox?parseTime=true"`
 		}
 	}{
+
 		Version: conf.Version{
 			Build: "v1.0.0",
 			Desc:  "Snippetbox",
@@ -67,7 +68,7 @@ func main() {
 	logger.Info("connected to mysql", map[string]any{})
 
 	mux := http.NewServeMux()
-	RegisterRoutes(mux, logger)
+	RegisterRoutes(mux, logger, db)
 
 	server := http.Server{
 		Handler: mux,
@@ -81,9 +82,9 @@ func main() {
 	}
 }
 
-func RegisterRoutes(mux *http.ServeMux, logger *logger.Logger) {
+func RegisterRoutes(mux *http.ServeMux, logger *logger.Logger, db *sql.DB) {
 
-	snippetHandler := snippet.NewHandler(logger)
+	snippetHandler := snippet.NewHandler(logger, db)
 	homeHander := home.NewHandler(logger)
 
 	fileServer := http.FileServer(http.Dir("./ui/assets/"))
@@ -91,6 +92,7 @@ func RegisterRoutes(mux *http.ServeMux, logger *logger.Logger) {
 
 	mux.HandleFunc("/", homeHander.HandleRenderFullPage)
 	mux.HandleFunc("/snippet/view", snippetHandler.HandleView)
+	mux.HandleFunc("/snippet/latest", snippetHandler.HandleLatest)
 	mux.HandleFunc("/snippet/create", snippetHandler.HandleCreate)
 }
 

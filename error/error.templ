@@ -1,0 +1,26 @@
+package error
+
+import "snippetbox/ui/html"
+import "net/http"
+import "fmt"
+
+type ErrorPageDate struct {
+	Message string
+	Code    int
+}
+
+templ ErrorPage(data ErrorPageDate) {
+	@html.Base(html.RootLayoutData{
+		Titel: http.StatusText(data.Code),
+	}) {
+		<div class="min-h-screen flex items-center justify-center bg-gray-100">
+			<div class="max-w-md w-full space-y-8 p-8 bg-white shadow-md rounded-md">
+				<div>
+					<h2 class="text-3xl font-extrabold text-red-500">{ fmt.Sprint(data.Code) }</h2>
+					<p class="mt-2 text-sm font-medium text-gray-600">{ http.StatusText(data.Code) }</p>
+				</div>
+				<p class="mt-4 text-gray-500">{ data.Message }</p>
+			</div>
+		</div>
+	}
+}

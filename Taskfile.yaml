@@ -21,7 +21,7 @@ tasks:
   run:
     deps: [build]
     cmds:
-      - ./$TEMP_DIR/$APP_NAME
+      - ./run_script.sh
   clean:
     cmds:
       - rm -rf $TEMP_DIR
