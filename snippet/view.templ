@@ -2,6 +2,7 @@ package snippet
 
 import "fmt"
 import "time"
+import "snippetbox/ui/html"
 
 type ViewData struct {
 	ID      string
@@ -29,26 +30,58 @@ func formatTime(t time.Time) string {
 	return t.Format(layout)
 }
 
-templ View(v ViewData) {
-	<div class="bg-white max-w-2xl mx-auto p-8 rounded shadow-md">
-		<div class="mb-4">
-			<span class="text-lg font-bold text-gray-800">{ v.Title }</span>
-		</div>
-		<div class="mb-4">
-			<p class="text-gray-600">{ v.Content }</p>
-		</div>
-		<div class="mb-4 text-sm text-gray-500">
-			<div class="flex justify-between items-center">
-				<div>
-					<span class="font-bold">ID:</span> { v.ID }
+templ ViewSnippet(v ViewData, format string) {
+	if format == "WithLayout" {
+		@html.Base(html.RootLayoutData{
+			Titel: "Snippet",
+		}) {
+			<div class="bg-white max-w-2xl mx-auto p-8 rounded shadow-md">
+				<div class="mb-4">
+					<span class="text-lg font-bold text-gray-800">{ v.Title }</span>
 				</div>
-				<div>
-					<span class="font-bold">Created:</span> { v.Created }
+				<div class="mb-4">
+					<p class="text-gray-600">{ v.Content }</p>
 				</div>
-				<div>
-					<span class="font-bold">Expires:</span> { v.Expires }
+				<div class="mb-4 text-sm text-gray-500">
+					<div class="flex justify-between items-center">
+						<div>
+							<span class="font-bold">ID:</span> { v.ID }
+						</div>
+						<div>
+							<span class="font-bold">Created:</span> { v.Created }
+						</div>
+						<div>
+							<span class="font-bold">Expires:</span> { v.Expires }
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	}
+	if format == "WithoutLayout" || format =="" {
+		<div class="bg-white max-w-2xl mx-auto p-8 rounded shadow-md">
+			<div class="mb-4">
+				<a
+ 					hx-get={ fmt.Sprintf("/snippet/view?id=%s", v.ID) }
+ 					hx-target="body"
+ 					href={ templ.SafeURL(fmt.Sprintf("/snippet/view?id=%s", v.ID)) }
+				>
+					<span class="text-lg font-bold text-gray-800">{ v.Title }</span>
+				</a>
+			</div>
+			<div class="mb-4 text-sm text-gray-500">
+				<div class="flex justify-between items-center">
+					<div>
+						<span class="font-bold">ID:</span> { v.ID }
+					</div>
+					<div>
+						<span class="font-bold">Created:</span> { v.Created }
+					</div>
+					<div>
+						<span class="font-bold">Expires:</span> { v.Expires }
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	}
 }

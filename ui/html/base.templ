@@ -43,7 +43,7 @@ templ footer() {
 }
 
 templ body(c string) {
-	<body class={ c }>
+	<body class={ c } hx-push-url="true">
 		{ children... }
 	</body>
 }

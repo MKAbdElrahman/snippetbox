@@ -1,8 +1,17 @@
-## CURL DOC
+## Server-side Rendered Application
 
-```
-curl -i --request POST http://localhost:3000/snippet/create
-```
 
-- `-X,  --request <method>  Specify request method to use`
-- `-i,  --include           Include protocol response headers in the output`
+## Architecture
+- Modular Monolith
+
+
+## Tech
+
+- go for backend
+- htmx for ajax requests
+- tailwind for css
+- Mysql for persistance
+
+## Frameworks
+
+- no frameworks, I use go stdlib only.

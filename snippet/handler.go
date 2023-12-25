@@ -45,7 +45,15 @@ func (h *SnippetHandler) HandleView(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	fmt.Fprintf(w, "%+v", snippet)
+	data := NewViewData(snippet)
+
+
+
+	err = ViewSnippet(data, "WithLayout").Render(r.Context(), w)
+	if err != nil {
+		h.errorHandler.InternalServerError(w, r, err)
+		return
+	}
 }
 
 func (h *SnippetHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
@@ -76,8 +84,15 @@ func (h *SnippetHandler) HandleLatest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	format := r.Header.Get("Format")
+
 	for _, snippet := range snippets {
 		data := NewViewData(snippet)
-		View(data).Render(r.Context(), w)
+		err = ViewSnippet(data, format).Render(r.Context(), w)
+		if err != nil {
+			h.errorHandler.InternalServerError(w, r, err)
+			return
+		}
 	}
+
 }
