@@ -27,31 +27,29 @@ func (h *SnippetHandler) HandleView(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 
 	if err != nil {
-		h.errorHandler.BadRequest(w, r, "invalid query id")
+		h.errorHandler.BadRequest(w, r, "Invalid ID parameter")
 		return
 	}
 	if id < 1 {
-		h.errorHandler.NotFound(w, r)
+		h.errorHandler.NotFound(w, r, "Snippet not found")
 		return
 	}
 
 	snippet, err := h.Service.Get(id)
 	if err != nil {
 		if errors.Is(err, ErrNoRecord) {
-			h.errorHandler.NotFound(w, r)
+			h.errorHandler.NotFound(w, r, "Snippet not found")
 			return
 		} else {
-			h.errorHandler.InternalServerError(w, r, err)
+			h.errorHandler.InternalServerError(w, r, err, "Error retrieving snippet")
 			return
 		}
 	}
 	data := NewViewData(snippet)
 
-
-
 	err = ViewSnippet(data, "WithLayout").Render(r.Context(), w)
 	if err != nil {
-		h.errorHandler.InternalServerError(w, r, err)
+		h.errorHandler.InternalServerError(w, r, err, "Error rendering snippet view")
 		return
 	}
 }
@@ -59,7 +57,7 @@ func (h *SnippetHandler) HandleView(w http.ResponseWriter, r *http.Request) {
 func (h *SnippetHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", "POST")
-		h.errorHandler.MethodNotAllowed(w, r)
+		h.errorHandler.MethodNotAllowed(w, r, "Method not allowed")
 	}
 
 	params := NewModelParams{
@@ -70,7 +68,7 @@ func (h *SnippetHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 
 	id, err := h.Service.Insert(params)
 	if err != nil {
-		h.errorHandler.InternalServerError(w, r, err)
+		h.errorHandler.InternalServerError(w, r, err, "Error creating snippet")
 		return
 	}
 
@@ -80,7 +78,7 @@ func (h *SnippetHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 func (h *SnippetHandler) HandleLatest(w http.ResponseWriter, r *http.Request) {
 	snippets, err := h.Service.Latest()
 	if err != nil {
-		h.errorHandler.InternalServerError(w, r, err)
+		h.errorHandler.InternalServerError(w, r, err, "Error retrieving latest snippets")
 		return
 	}
 
@@ -90,7 +88,7 @@ func (h *SnippetHandler) HandleLatest(w http.ResponseWriter, r *http.Request) {
 		data := NewViewData(snippet)
 		err = ViewSnippet(data, format).Render(r.Context(), w)
 		if err != nil {
-			h.errorHandler.InternalServerError(w, r, err)
+			h.errorHandler.InternalServerError(w, r, err, "Error rendering snippet view")
 			return
 		}
 	}
