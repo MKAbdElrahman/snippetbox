@@ -5,6 +5,7 @@ require github.com/a-h/templ v0.2.476
 require (
 	github.com/ardanlabs/conf/v3 v3.1.7
 	github.com/fatih/color v1.16.0
+	github.com/go-chi/chi/v5 v5.0.11
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/justinas/alice v1.2.0
 )

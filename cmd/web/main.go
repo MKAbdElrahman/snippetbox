@@ -11,6 +11,7 @@ import (
 	"github.com/ardanlabs/conf/v3"
 	"github.com/justinas/alice"
 
+	"github.com/go-chi/chi/v5"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -75,7 +76,7 @@ func main() {
 
 	logger.Info("connected to mysql", map[string]any{})
 
-	mux := http.NewServeMux()
+	mux := chi.NewRouter()
 	RegisterRoutes(mux, logger, db)
 
 	middleware := alice.New(
