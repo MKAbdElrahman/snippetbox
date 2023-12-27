@@ -19,12 +19,6 @@ func HandleLog(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(os.Stdout, r.Method+" "+r.URL.Path+"\n")
 }
 
-// type MyErrorHandler struct {
-// }
-// func (h *MyErrorHandler) HandleError(w http.ResponseWriter, r *http.Request, err error) {
-// 	http.Error(w, "internal server error", http.StatusInternalServerError)
-// }
-
 func main() {
 
 	cfg := struct {
