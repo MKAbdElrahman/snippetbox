@@ -11,9 +11,21 @@ import (
 	"snippetbox/snippet"
 
 	"github.com/ardanlabs/conf/v3"
+	"github.com/justinas/alice"
 
 	_ "github.com/go-sql-driver/mysql"
 )
+
+func HandleLog(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(os.Stdout, r.Method+" "+r.URL.Path+"\n")
+}
+
+type MyErrorHandler struct {
+}
+
+func (h *MyErrorHandler) HandleError(w http.ResponseWriter, r *http.Request, err error) {
+	http.Error(w, "internal server error", http.StatusInternalServerError)
+}
 
 func main() {
 
@@ -70,8 +82,9 @@ func main() {
 	mux := http.NewServeMux()
 	RegisterRoutes(mux, logger, db)
 
+	middleware := alice.New(PanicRecoverMiddleware(&MyErrorHandler{}), LogMiddleware(HandleLog), SecureHeadersMiddleware)
 	server := http.Server{
-		Handler: mux,
+		Handler: middleware.Then(mux),
 		Addr:    cfg.Web.Host,
 	}
 
@@ -94,8 +107,14 @@ func RegisterRoutes(mux *http.ServeMux, logger *logger.Logger, db *sql.DB) {
 	mux.HandleFunc("/snippet/view", snippetHandler.HandleView)
 	mux.HandleFunc("/snippet/latest", snippetHandler.HandleLatest)
 	mux.HandleFunc("/snippet/create", snippetHandler.HandleCreate)
+
+	mux.HandleFunc("/test", HandleTest)
+
 }
 
+func HandleTest(w http.ResponseWriter, r *http.Request) {
+	panic(fmt.Errorf("this is a test"))
+}
 func openDB(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
