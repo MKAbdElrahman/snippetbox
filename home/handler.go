@@ -2,17 +2,17 @@ package home
 
 import (
 	"net/http"
-	"snippetbox/error"
 	"snippetbox/foundation/logger"
+	"snippetbox/httperror"
 )
 
 type Handler struct {
-	errorHandler *error.Handler
+	errorHandler *httperror.Handler
 }
 
 func NewHandler(logger *logger.Logger) *Handler {
 	return &Handler{
-		errorHandler: error.NewHandler(logger),
+		errorHandler: httperror.NewHandler(logger),
 	}
 }
 

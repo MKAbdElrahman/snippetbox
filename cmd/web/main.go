@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"snippetbox/error"
 	"snippetbox/foundation/logger"
+	"snippetbox/httperror"
 
 	"github.com/ardanlabs/conf/v3"
 	"github.com/justinas/alice"
@@ -74,7 +74,7 @@ func main() {
 	RegisterRoutes(mux, logger, db)
 
 	middleware := alice.New(
-		PanicRecoverMiddleware(error.NewHandler(logger)),
+		PanicRecoverMiddleware(httperror.NewHandler(logger)),
 		LogMiddleware(HandleLog),
 		SecureHeadersMiddleware)
 

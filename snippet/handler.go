@@ -5,21 +5,21 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"snippetbox/error"
 	"snippetbox/foundation/logger"
+	"snippetbox/httperror"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
 )
 
 type SnippetHandler struct {
-	errorHandler *error.Handler
+	errorHandler *httperror.Handler
 	Service      *Service
 }
 
 func NewHandler(logger *logger.Logger, db *sql.DB) *SnippetHandler {
 	return &SnippetHandler{
-		errorHandler: error.NewHandler(logger),
+		errorHandler: httperror.NewHandler(logger),
 		Service:      NewService(db),
 	}
 }
