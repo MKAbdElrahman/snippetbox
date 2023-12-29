@@ -6,12 +6,19 @@ import (
 	"net/http"
 	"snippetbox/foundation/logger"
 	"snippetbox/home"
+	"snippetbox/httperror"
 	"snippetbox/snippet"
 
 	"github.com/go-chi/chi/v5"
 )
 
 func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, db *sql.DB) {
+
+	errorHandelr := httperror.NewHandler(logger)
+
+	mux.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		errorHandelr.NotFound(w, r, "")
+	})
 
 	snippetHandler := snippet.NewHandler(logger, db)
 	homeHander := home.NewHandler(logger)
