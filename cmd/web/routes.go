@@ -13,29 +13,30 @@ import (
 )
 
 func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, db *sql.DB) {
+	errorHandler := httperror.NewHandler(logger)
 
-	errorHandelr := httperror.NewHandler(logger)
-
-	mux.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		errorHandelr.NotFound(w, r, "")
-	})
-
-	snippetHandler := snippet.NewHandler(logger, db)
-	homeHander := home.NewHandler(logger)
-
+	// Serve static files
 	fileServer := http.FileServer(http.Dir("./ui/assets/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
-	mux.Get("/", homeHander.HandleRenderFullPage)
+	// Handle 404 Not Found
+	mux.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		errorHandler.NotFound(w, r, "")
+	})
+
+	// Home routes
+	homeHandler := home.NewHandler(logger)
+	mux.Get("/", homeHandler.HandleRenderFullPage)
+
+	// Snippet routes
+	snippetHandler := snippet.NewHandler(logger, db)
 	mux.Get("/snippet/view/{id}", snippetHandler.HandleView)
 	mux.Get("/snippet/latest", snippetHandler.HandleLatest)
-
 	mux.Get("/snippet/new", snippetHandler.HandleGetNewSnippetForm)
-
 	mux.Post("/snippet/create", snippetHandler.HandleCreate)
 
+	// Test route
 	mux.Get("/test", func(w http.ResponseWriter, r *http.Request) {
 		panic(fmt.Errorf("this is a test"))
 	})
-
 }
