@@ -8,6 +8,8 @@ import (
 	"snippetbox/error"
 	"snippetbox/foundation/logger"
 	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type SnippetHandler struct {
@@ -24,7 +26,7 @@ func NewHandler(logger *logger.Logger, db *sql.DB) *SnippetHandler {
 
 func (h *SnippetHandler) HandleView(w http.ResponseWriter, r *http.Request) {
 
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 
 	if err != nil {
 		h.errorHandler.BadRequest(w, r, "Invalid ID parameter")
@@ -93,4 +95,8 @@ func (h *SnippetHandler) HandleLatest(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+}
+
+func (h *SnippetHandler) HandleGetNewSnippetForm(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Display the form for creating a new snippet..."))
 }

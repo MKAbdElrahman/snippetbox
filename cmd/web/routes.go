@@ -17,11 +17,14 @@ func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, db *sql.DB) {
 	homeHander := home.NewHandler(logger)
 
 	fileServer := http.FileServer(http.Dir("./ui/assets/"))
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
+	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	mux.Get("/", homeHander.HandleRenderFullPage)
-	mux.Get("/snippet/view", snippetHandler.HandleView)
+	mux.Get("/snippet/view/{id}", snippetHandler.HandleView)
 	mux.Get("/snippet/latest", snippetHandler.HandleLatest)
+
+	mux.Get("/snippet/new", snippetHandler.HandleGetNewSnippetForm)
+
 	mux.Post("/snippet/create", snippetHandler.HandleCreate)
 
 	mux.Get("/test", func(w http.ResponseWriter, r *http.Request) {

@@ -62,9 +62,9 @@ templ ViewSnippet(v ViewData, format string) {
 		<div class="bg-white max-w-2xl mx-auto p-8 rounded shadow-md">
 			<div class="mb-4">
 				<a
- 					hx-get={ fmt.Sprintf("/snippet/view?id=%s", v.ID) }
+ 					hx-get={ fmt.Sprintf("/snippet/view/%s", v.ID) }
  					hx-target="body"
- 					href={ templ.SafeURL(fmt.Sprintf("/snippet/view?id=%s", v.ID)) }
+ 					href={ templ.SafeURL(fmt.Sprintf("/snippet/view/%s", v.ID)) }
 				>
 					<span class="text-lg font-bold text-gray-800">{ v.Title }</span>
 				</a>
