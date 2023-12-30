@@ -1,26 +1,69 @@
 package httperror
 
-import "snippetbox/ui/html"
-import "net/http"
-import "fmt"
+import (
+	"fmt"
+	"net/http"
+	"snippetbox/ui/html"
+)
 
-type ErrorPageDate struct {
+type ErrorPageData struct {
 	Message string
 	Code    int
 }
 
-templ ErrorPage(data ErrorPageDate) {
+templ ErrorPage(data ErrorPageData) {
 	@html.Base(html.RootLayoutData{
-		Titel: http.StatusText(data.Code),
+		Titel:     fmt.Sprintf("%d - %s", data.Code, http.StatusText(data.Code)),
+		BodyClass: "bg-gray-800 text-white min-h-screen font-sans",
 	}) {
-		<div class="min-h-screen flex items-center justify-center bg-gray-100">
-			<div class="max-w-md w-full space-y-8 p-8 bg-white shadow-md rounded-md">
-				<div>
-					<h2 class="text-3xl font-extrabold text-red-500">{ fmt.Sprint(data.Code) }</h2>
-					<p class="mt-2 text-sm font-medium text-gray-600">{ http.StatusText(data.Code) }</p>
-				</div>
-				<p class="mt-4 text-gray-500">{ data.Message }</p>
-			</div>
+		<div class="container mx-auto mt-8">
+			@errorLayout(data)
 		</div>
 	}
+}
+
+templ errorLayout(data ErrorPageData) {
+	@navbar()
+	<div class="text-center">
+		<h1 class="text-4xl font-semibold mb-4">{ fmt.Sprint(data.Code) }</h1>
+		<p class="text-gray-300">{ http.StatusText(data.Code) }</p>
+	</div>
+	<p class="text-gray-300">{ data.Message }</p>
+}
+
+templ navbar() {
+	<nav class="bg-blue-700 p-4 mb-8">
+		<div class="container mx-auto flex items-center justify-between">
+			<div class="flex items-center">
+				<a href="/" class="text-white font-semibold text-xl">Snippetbox</a>
+			</div>
+			<ul class="hidden md:flex space-x-4">
+				<li><a href="#" class="text-white hover:text-gray-300">Home</a></li>
+				<li><a href="#" class="text-white hover:text-gray-300">About</a></li>
+				<li><a href="#" class="text-white hover:text-gray-300">Contact</a></li>
+			</ul>
+			<button class="md:hidden text-white focus:outline-none">
+				<svg
+ 					class="h-6 w-6"
+ 					fill="none"
+ 					stroke="currentColor"
+ 					viewBox="0 0 24 24"
+ 					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+ 						stroke-linecap="round"
+ 						stroke-linejoin="round"
+ 						stroke-width="2"
+ 						d="M4 6h16M4 12h16m-7 6h7"
+					></path>
+				</svg>
+			</button>
+		</div>
+		<!-- Responsive Menu for Small Screens -->
+		<ul class="md:hidden bg-blue-700 text-white absolute top-full left-0 hidden">
+			<li class="block p-4 border-b border-blue-800"><a href="#" class="hover:text-gray-300">Home</a></li>
+			<li class="block p-4 border-b border-blue-800"><a href="#" class="hover:text-gray-300">About</a></li>
+			<li class="block p-4"><a href="#" class="hover:text-gray-300">Contact</a></li>
+		</ul>
+	</nav>
 }

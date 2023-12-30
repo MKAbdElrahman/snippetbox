@@ -3,6 +3,7 @@ package snippet
 import (
 	"database/sql"
 	"errors"
+	"time"
 )
 
 var ErrNoRecord = errors.New("models: no matching record found")
@@ -17,12 +18,27 @@ func NewService(db *sql.DB) *Service {
 	}
 }
 
-// This will insert a new snippet into the database.
-func (m *Service) Insert(params NewModelParams) (int, error) {
-	stmt := `INSERT INTO snippets (title, content, created, expires)
-	VALUES(?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`
+// Insert will insert a new snippet into the database.
+func (m *Service) Insert(params NewModelParams, userTimeZone string) (int, error) {
+	// Combine date and time into a single time.Time object.
+	expires := time.Date(
+		params.ExpiresDate.Year(),
+		params.ExpiresDate.Month(),
+		params.ExpiresDate.Day(),
+		params.ExpiresTime.Hour(),
+		params.ExpiresTime.Minute(),
+		params.ExpiresTime.Second(),
+		0, // Nanoseconds
+		params.ExpiresTime.Location(),
+	)
 
-	result, err := m.DB.Exec(stmt, params.Title, params.Content, params.DaystToExpires)
+	// Convert expires time to UTC before inserting into the database.
+	expiresUTC := expires.UTC()
+
+	stmt := `INSERT INTO snippets (title, content, created, expires)
+	VALUES(?, ?, UTC_TIMESTAMP(), ?)`
+
+	result, err := m.DB.Exec(stmt, params.Title, params.Content, expiresUTC)
 	if err != nil {
 		return 0, err
 	}
@@ -35,8 +51,8 @@ func (m *Service) Insert(params NewModelParams) (int, error) {
 	return int(id), nil
 }
 
-// This will return a specific snippet based on its id.
-func (m *Service) Get(id int) (*Model, error) {
+// Get will return a specific snippet based on its id.
+func (m *Service) Get(id int, userTimeZone string) (*Model, error) {
 	stmt := `SELECT id, title, content, created, expires FROM snippets
 	WHERE expires > UTC_TIMESTAMP() AND id = ?`
 
@@ -51,11 +67,27 @@ func (m *Service) Get(id int) (*Model, error) {
 			return nil, err
 		}
 	}
+
+	// Convert expires time to user's time zone before returning.
+	s.Expires = s.Expires.In(time.FixedZone(userTimeZone, 0))
+
 	return s, nil
 }
 
-// This will return the 10 most recently created snippets.
-func (m *Service) Latest() ([]*Model, error) {
+// Delete will delete a specific snippet based on its id.
+func (m *Service) Delete(id int) error {
+	stmt := `DELETE FROM snippets WHERE id = ?`
+
+	_, err := m.DB.Exec(stmt, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Latest will return the 10 most recently created snippets.
+func (m *Service) Latest(userTimeZone string) ([]*Model, error) {
 	// Write the SQL statement we want to execute.
 	stmt := `SELECT id, title, content, created, expires FROM snippets
 		WHERE expires > UTC_TIMESTAMP() ORDER BY id DESC LIMIT 10`
@@ -75,6 +107,10 @@ func (m *Service) Latest() ([]*Model, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		// Convert expires time to user's time zone before appending to the result.
+		s.Expires = s.Expires.In(time.FixedZone(userTimeZone, 0))
+
 		snippets = append(snippets, s)
 	}
 
@@ -82,4 +118,12 @@ func (m *Service) Latest() ([]*Model, error) {
 		return nil, err
 	}
 	return snippets, nil
+}
+
+// Delete prepares the DELETE statement for a specific snippet.
+func (s *Model) Delete() (string, []interface{}) {
+	stmt := `DELETE FROM snippets WHERE id = ?`
+	params := []interface{}{s.ID}
+
+	return stmt, params
 }

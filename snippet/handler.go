@@ -8,6 +8,7 @@ import (
 	"snippetbox/foundation/logger"
 	"snippetbox/httperror"
 	"strconv"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -24,7 +25,7 @@ func NewHandler(logger *logger.Logger, db *sql.DB) *SnippetHandler {
 	}
 }
 
-func (h *SnippetHandler) HandleView(w http.ResponseWriter, r *http.Request) {
+func (h *SnippetHandler) ViewSnippet(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 
@@ -37,7 +38,7 @@ func (h *SnippetHandler) HandleView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	snippet, err := h.Service.Get(id)
+	snippet, err := h.Service.Get(id, "Africa/Cairo")
 	if err != nil {
 		if errors.Is(err, ErrNoRecord) {
 			h.errorHandler.NotFound(w, r, "Snippet not found")
@@ -49,46 +50,72 @@ func (h *SnippetHandler) HandleView(w http.ResponseWriter, r *http.Request) {
 	}
 	data := NewViewData(snippet)
 
-	err = ViewSnippet(data, "WithLayout").Render(r.Context(), w)
+	err = ViewSnippet(data).Render(r.Context(), w)
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error rendering snippet view")
 		return
 	}
 }
 
-func (h *SnippetHandler) HandleCreate(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.Header().Set("Allow", "POST")
-		h.errorHandler.MethodNotAllowed(w, r, "Method not allowed")
-	}
+func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 
-	params := NewModelParams{
-		Title:          "O snail",
-		Content:        "O snail\nClimb Mount Fuji,\nBut slowly, slowly!\n\n- Kobayashi Issa",
-		DaystToExpires: 7,
-	}
-
-	id, err := h.Service.Insert(params)
+	err := r.ParseForm()
 	if err != nil {
+
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		return
+	}
+
+	expirationDate, err := time.Parse("2006-01-02", r.FormValue("expiresDate"))
+	if err != nil {
+		http.Error(w, "Error parsing expiration date", http.StatusBadRequest)
+		return
+	}
+
+	expirationTime, err := time.Parse("15:04", r.FormValue("expiresTime"))
+	if err != nil {
+		http.Error(w, "Error parsing expiration time", http.StatusBadRequest)
+		return
+	}
+
+	snippetData := NewModelParams{
+		Title:       r.FormValue("title"),
+		Content:     r.FormValue("content"),
+		ExpiresDate: expirationDate,
+		ExpiresTime: expirationTime,
+	}
+
+	id, err := h.Service.Insert(snippetData, "Africa/Cairo")
+	if err != nil {
+		fmt.Println(snippetData)
 		h.errorHandler.InternalServerError(w, r, err, "Error creating snippet")
 		return
 	}
 
-	http.Redirect(w, r, fmt.Sprintf("/snippet/view?id=%d", id), http.StatusSeeOther)
+	m, err := h.Service.Get(id, "Africa/Cairo")
+	if err != nil {
+		h.errorHandler.InternalServerError(w, r, err, "Error getting snippet")
+		return
+	}
+
+	err = ViewSnippet(NewViewData(m)).Render(r.Context(), w)
+	if err != nil {
+		h.errorHandler.InternalServerError(w, r, err, "Error rendering snippet view")
+		return
+	}
 }
 
-func (h *SnippetHandler) HandleLatest(w http.ResponseWriter, r *http.Request) {
-	snippets, err := h.Service.Latest()
+func (h *SnippetHandler) ListLatestSnippets(w http.ResponseWriter, r *http.Request) {
+	snippets, err := h.Service.Latest("Africa/Cairo")
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error retrieving latest snippets")
 		return
 	}
 
-	format := r.Header.Get("Format")
-
+	fmt.Println(snippets)
 	for _, snippet := range snippets {
 		data := NewViewData(snippet)
-		err = ViewSnippet(data, format).Render(r.Context(), w)
+		err = ViewSnippet(data).Render(r.Context(), w)
 		if err != nil {
 			h.errorHandler.InternalServerError(w, r, err, "Error rendering snippet view")
 			return
@@ -97,6 +124,48 @@ func (h *SnippetHandler) HandleLatest(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (h *SnippetHandler) HandleGetNewSnippetForm(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Display the form for creating a new snippet..."))
+func (h *SnippetHandler) GetNewSnippetForm(w http.ResponseWriter, r *http.Request) {
+	err := CreateSnippetForm().Render(r.Context(), w)
+
+	if err != nil {
+		h.errorHandler.InternalServerError(w, r, err, "Error rendering full page")
+		return
+	}
+}
+
+func (h *SnippetHandler) GetSearchSnippetForm(w http.ResponseWriter, r *http.Request) {
+	err := SearchSnippetForm().Render(r.Context(), w)
+
+	if err != nil {
+		h.errorHandler.InternalServerError(w, r, err, "Error rendering full page")
+		return
+	}
+}
+
+func (h *SnippetHandler) DeleteSnippet(w http.ResponseWriter, r *http.Request) {
+	// Extract the snippet ID from the URL parameter.
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		h.errorHandler.BadRequest(w, r, "Invalid ID parameter")
+		return
+	}
+
+	// Check if the ID is valid.
+	if id < 1 {
+		h.errorHandler.NotFound(w, r, "Snippet not found")
+		return
+	}
+
+	// Delete the snippet.
+	err = h.Service.Delete(id)
+	if err != nil {
+		if errors.Is(err, ErrNoRecord) {
+			h.errorHandler.NotFound(w, r, "Snippet not found")
+			return
+		} else {
+			h.errorHandler.InternalServerError(w, r, err, "Error deleting snippet")
+			return
+		}
+	}
+
 }

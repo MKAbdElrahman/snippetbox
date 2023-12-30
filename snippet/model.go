@@ -11,7 +11,8 @@ type Model struct {
 }
 
 type NewModelParams struct {
-	Title          string
-	Content        string
-	DaystToExpires int
+	Title       string
+	Content     string
+	ExpiresDate time.Time
+	ExpiresTime time.Time
 }

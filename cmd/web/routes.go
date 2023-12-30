@@ -30,10 +30,16 @@ func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, db *sql.DB) {
 
 	// Snippet routes
 	snippetHandler := snippet.NewHandler(logger, db)
-	mux.Get("/snippet/view/{id}", snippetHandler.HandleView)
-	mux.Get("/snippet/latest", snippetHandler.HandleLatest)
-	mux.Get("/snippet/new", snippetHandler.HandleGetNewSnippetForm)
-	mux.Post("/snippet/create", snippetHandler.HandleCreate)
+	mux.Route("/snippets", func(r chi.Router) {
+		r.Get("/", snippetHandler.ListLatestSnippets)
+		r.Get("/{id}", snippetHandler.ViewSnippet)
+		r.Delete("/{id}", snippetHandler.DeleteSnippet)
+
+		r.Get("/form/create", snippetHandler.GetNewSnippetForm)
+		r.Get("/form/search", snippetHandler.GetSearchSnippetForm)
+
+		r.Post("/", snippetHandler.CreateSnippet)
+	})
 
 	// Test route
 	mux.Get("/test", func(w http.ResponseWriter, r *http.Request) {

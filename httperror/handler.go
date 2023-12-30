@@ -72,7 +72,7 @@ func (h *Handler) HandleHTTPError(w http.ResponseWriter, r *http.Request, err HT
 		)
 	}
 
-	ErrorPage(ErrorPageDate{
+	ErrorPage(ErrorPageData{
 		Message: err.UserMessage,
 		Code:    err.Code,
 	}).Render(r.Context(), w)

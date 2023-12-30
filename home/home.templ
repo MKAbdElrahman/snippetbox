@@ -1,16 +1,60 @@
 package home
 
 import "snippetbox/ui/html"
-import "fmt"
 
 templ HomePage() {
 	@html.Base(html.RootLayoutData{
-		Titel: "Home - Snippetbox",
-		BodyClass: "bg-gray-100  min-h-screen font-sans",
+		Titel:     "Home - Snippetbox",
+		BodyClass: "bg-gray-800 text-white min-h-screen font-sans", // Dark mode background and text color
 	}) {
-		<div class="container mx-auto mt-8 text-center">
-			<h2 class="text-3xl font-extrabold text-gray-800 mb-6">Latest Snippets</h2>
-			<div hx-get="/snippet/latest" hx-push-url="false" hx-headers={ fmt.Sprint(`{"Format": "WithoutLayout"}`) } hx-swap="outerHTML" hx-target="this" hx-trigger="revealed"></div>
+		<div class="container mx-auto mt-8">
+			<!-- Navbar -->
+			@navbar()
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+				<div class="bg-gray-700 p-6 rounded-lg shadow-md mb-8">
+					<div hx-get="/snippets/form/create" hx-target="this" hx-swap="innerHTML" hx-trigger="revealed"></div>
+				</div>
+				<div class="bg-gray-700 p-6 rounded-lg shadow-md mb-8">
+					<div hx-get="/snippets/form/search" hx-target="this" hx-swap="innerHTML" hx-trigger="revealed"></div>
+				</div>
+			</div>
+			<!-- Snippets Timeline -->
+			<div id="snippets-timeline" class="w-full" hx-get="/snippets" hx-target="this" hx-swap="innerHTML" hx-trigger="revealed"></div>
 		</div>
 	}
+}
+
+templ navbar() {
+	<nav class="bg-green-700 p-4 mb-8">
+		<div class="container mx-auto flex items-center justify-between">
+			<div class="flex items-center">
+				<a href="/" class="text-white font-semibold text-xl">Snippetbox</a>
+			</div>
+			<ul class="hidden md:flex space-x-4">
+				<li><a href="#" class="text-white hover:text-gray-300">Sign Out</a></li>
+			</ul>
+			<button class="md:hidden text-white focus:outline-none">
+				<svg
+ 					class="h-6 w-6"
+ 					fill="none"
+ 					stroke="currentColor"
+ 					viewBox="0 0 24 24"
+ 					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+ 						stroke-linecap="round"
+ 						stroke-linejoin="round"
+ 						stroke-width="2"
+ 						d="M4 6h16M4 12h16m-7 6h7"
+					></path>
+				</svg>
+			</button>
+		</div>
+		<!-- Responsive Menu for Small Screens -->
+		<ul class="md:hidden bg-green-700 text-white absolute top-full left-0 hidden">
+			<li class="block p-4 border-b border-green-800"><a href="#" class="hover:text-gray-300">Home</a></li>
+			<li class="block p-4 border-b border-green-800"><a href="#" class="hover:text-gray-300">About</a></li>
+			<li class="block p-4"><a href="#" class="hover:text-gray-300">Contact</a></li>
+		</ul>
+	</nav>
 }
