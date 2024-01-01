@@ -19,7 +19,7 @@ func NewService(db *sql.DB) *Service {
 }
 
 // Insert will insert a new snippet into the database.
-func (m *Service) Insert(params NewModelParams, userTimeZone string) (int, error) {
+func (m *Service) Insert(params NewModelParams) (int, error) {
 	// Combine date and time into a single time.Time object.
 	expires := time.Date(
 		params.ExpiresDate.Year(),
@@ -52,7 +52,7 @@ func (m *Service) Insert(params NewModelParams, userTimeZone string) (int, error
 }
 
 // Get will return a specific snippet based on its id.
-func (m *Service) Get(id int, userTimeZone string) (*Model, error) {
+func (m *Service) Get(id int) (*Model, error) {
 	stmt := `SELECT id, title, content, created, expires FROM snippets
 	WHERE expires > UTC_TIMESTAMP() AND id = ?`
 
@@ -67,9 +67,6 @@ func (m *Service) Get(id int, userTimeZone string) (*Model, error) {
 			return nil, err
 		}
 	}
-
-	// Convert expires time to user's time zone before returning.
-	s.Expires = s.Expires.In(time.FixedZone(userTimeZone, 0))
 
 	return s, nil
 }
@@ -87,7 +84,7 @@ func (m *Service) Delete(id int) error {
 }
 
 // Latest will return the 10 most recently created snippets.
-func (m *Service) Latest(userTimeZone string) ([]*Model, error) {
+func (m *Service) Latest() ([]*Model, error) {
 	// Write the SQL statement we want to execute.
 	stmt := `SELECT id, title, content, created, expires FROM snippets
 		WHERE expires > UTC_TIMESTAMP() ORDER BY id DESC LIMIT 10`
@@ -107,9 +104,6 @@ func (m *Service) Latest(userTimeZone string) ([]*Model, error) {
 		if err != nil {
 			return nil, err
 		}
-
-		// Convert expires time to user's time zone before appending to the result.
-		s.Expires = s.Expires.In(time.FixedZone(userTimeZone, 0))
 
 		snippets = append(snippets, s)
 	}

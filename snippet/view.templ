@@ -18,89 +18,21 @@ func NewViewData(m *Model) ViewData {
 		ID:      fmt.Sprint(m.ID),
 		Title:   m.Title,
 		Content: m.Content,
-		Created: formatCreateTime(m.Created, "Africa/Cairo"),
-		Expires: formatExpireTime(m.Expires, "Africa/Cairo"),
+		Created: formatCreateTime(m.Created),
+		Expires: formatExpireTime(m.Expires),
 	}
 }
 
-func formatCreateTime(t time.Time, userTimeZone string) string {
-	userLocation, err := time.LoadLocation(userTimeZone)
-	if err != nil {
-		// Handle the error, e.g., fall back to a default time zone.
-		return "Error loading user's time zone"
-	}
-
-	t = t.In(userLocation)
-
-	currentTime := time.Now().In(userLocation)
-	diff := currentTime.Sub(t)
+func formatCreateTime(t time.Time) string {
 
 	layout := "2006-01-02 15:04"
-
-	if diff.Seconds() < 60 {
-		return "Just now"
-	}
-
-	if diff.Minutes() < 60 {
-		return fmt.Sprintf("%.0f minutes ago", diff.Minutes())
-	}
-
-	if diff.Hours() < 24 {
-		return fmt.Sprintf("%.0f hours ago", diff.Hours())
-	}
-
-	if diff.Hours() < 24*7 {
-		return t.Format("Monday")
-	}
 
 	return t.Format(layout)
 }
 
-func formatExpireTime(t time.Time, userTimeZone string) string {
-	userLocation, err := time.LoadLocation(userTimeZone)
-	if err != nil {
-		// Handle the error, e.g., fall back to a default time zone.
-		return "Error loading user's time zone"
-	}
-
-	t = t.In(userLocation)
-
-	currentTime := time.Now().In(userLocation)
-	diff := t.Sub(currentTime)
-
-	// Display seconds remaining
-	if diff.Seconds() < 60 {
-		return fmt.Sprintf("Expires in %.0f seconds", diff.Seconds())
-	}
-
-	// Display minutes remaining
-	if diff.Minutes() < 60 {
-		return fmt.Sprintf("Expires in %.0f minutes", diff.Minutes())
-	}
-
-	// Display hours remaining
-	if diff.Hours() < 24 {
-		return fmt.Sprintf("Expires in %.0f hours", diff.Hours())
-	}
-
-	// Display days remaining
-	if diff.Hours() < 24*7 {
-		return fmt.Sprintf("Expires in %.0f days", diff.Hours()/24)
-	}
-
-	// Display months remaining
-	if diff.Hours() < 24*30 {
-		return fmt.Sprintf("Expires in %.0f months", diff.Hours()/24/30)
-	}
-
-	// Display years remaining
-	if diff.Hours() < 24*365 {
-		return fmt.Sprintf("Expires in %.0f years", diff.Hours()/24/365)
-	}
-
-	// Display the date and time for expiration
+func formatExpireTime(t time.Time) string {
 	layout := "2006-01-02 15:04"
-	return fmt.Sprintf("Expires on %s", t.Format(layout))
+	return fmt.Sprintf("%s", t.Format(layout))
 }
 
 templ ViewSnippet(data ViewData) {
@@ -108,13 +40,13 @@ templ ViewSnippet(data ViewData) {
 		<div class="bg-gray-700 p-6 rounded-lg shadow-md mb-4">
 			<div class="flex justify-end mb-2">
 				<button
- 					class="text-sm text-gray-500 mr-2 hover:text-red-500"
- 					hx-confirm="Are you sure you want to delete this resource?"
- 					hx-delete={ "/snippets/" + data.ID }
- 					hx-push-url="false"
- 					hx-target="closest .snippet"
- 					hx-swap="outerHTML swap:1s scroll:bottom"
- 					transition:true
+					class="text-sm text-gray-500 mr-2 hover:text-red-500"
+					hx-confirm="Are you sure you want to delete this resource?"
+					hx-delete={ "/snippets/" + data.ID }
+					hx-push-url="false"
+					hx-target="closest .snippet"
+					hx-swap="outerHTML swap:1s scroll:bottom"
+					transition:true
 				>
 					Delete
 				</button>

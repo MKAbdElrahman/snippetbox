@@ -28,89 +28,21 @@ func NewViewData(m *Model) ViewData {
 		ID:      fmt.Sprint(m.ID),
 		Title:   m.Title,
 		Content: m.Content,
-		Created: formatCreateTime(m.Created, "Africa/Cairo"),
-		Expires: formatExpireTime(m.Expires, "Africa/Cairo"),
+		Created: formatCreateTime(m.Created),
+		Expires: formatExpireTime(m.Expires),
 	}
 }
 
-func formatCreateTime(t time.Time, userTimeZone string) string {
-	userLocation, err := time.LoadLocation(userTimeZone)
-	if err != nil {
-		// Handle the error, e.g., fall back to a default time zone.
-		return "Error loading user's time zone"
-	}
-
-	t = t.In(userLocation)
-
-	currentTime := time.Now().In(userLocation)
-	diff := currentTime.Sub(t)
+func formatCreateTime(t time.Time) string {
 
 	layout := "2006-01-02 15:04"
-
-	if diff.Seconds() < 60 {
-		return "Just now"
-	}
-
-	if diff.Minutes() < 60 {
-		return fmt.Sprintf("%.0f minutes ago", diff.Minutes())
-	}
-
-	if diff.Hours() < 24 {
-		return fmt.Sprintf("%.0f hours ago", diff.Hours())
-	}
-
-	if diff.Hours() < 24*7 {
-		return t.Format("Monday")
-	}
 
 	return t.Format(layout)
 }
 
-func formatExpireTime(t time.Time, userTimeZone string) string {
-	userLocation, err := time.LoadLocation(userTimeZone)
-	if err != nil {
-		// Handle the error, e.g., fall back to a default time zone.
-		return "Error loading user's time zone"
-	}
-
-	t = t.In(userLocation)
-
-	currentTime := time.Now().In(userLocation)
-	diff := t.Sub(currentTime)
-
-	// Display seconds remaining
-	if diff.Seconds() < 60 {
-		return fmt.Sprintf("Expires in %.0f seconds", diff.Seconds())
-	}
-
-	// Display minutes remaining
-	if diff.Minutes() < 60 {
-		return fmt.Sprintf("Expires in %.0f minutes", diff.Minutes())
-	}
-
-	// Display hours remaining
-	if diff.Hours() < 24 {
-		return fmt.Sprintf("Expires in %.0f hours", diff.Hours())
-	}
-
-	// Display days remaining
-	if diff.Hours() < 24*7 {
-		return fmt.Sprintf("Expires in %.0f days", diff.Hours()/24)
-	}
-
-	// Display months remaining
-	if diff.Hours() < 24*30 {
-		return fmt.Sprintf("Expires in %.0f months", diff.Hours()/24/30)
-	}
-
-	// Display years remaining
-	if diff.Hours() < 24*365 {
-		return fmt.Sprintf("Expires in %.0f years", diff.Hours()/24/365)
-	}
-
-	// Display the date and time for expiration
+func formatExpireTime(t time.Time) string {
 	layout := "2006-01-02 15:04"
-	return fmt.Sprintf("Expires on %s", t.Format(layout))
+	return fmt.Sprintf("%s", t.Format(layout))
 }
 
 func ViewSnippet(data ViewData) templ.Component {
@@ -164,7 +96,7 @@ func ViewSnippet(data ViewData) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(data.Created)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `snippet/view.templ`, Line: 125, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `snippet/view.templ`, Line: 57, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -182,7 +114,7 @@ func ViewSnippet(data ViewData) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(data.Expires)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `snippet/view.templ`, Line: 125, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `snippet/view.templ`, Line: 57, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -195,7 +127,7 @@ func ViewSnippet(data ViewData) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(data.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `snippet/view.templ`, Line: 127, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `snippet/view.templ`, Line: 59, Col: 54}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -208,7 +140,7 @@ func ViewSnippet(data ViewData) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(data.Content)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `snippet/view.templ`, Line: 128, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `snippet/view.templ`, Line: 60, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {

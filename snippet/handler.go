@@ -40,7 +40,7 @@ func (h *SnippetHandler) ViewSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	snippet, err := h.Service.Get(id, "Africa/Cairo")
+	snippet, err := h.Service.Get(id)
 	if err != nil {
 		if errors.Is(err, ErrNoRecord) {
 			h.errorHandler.NotFound(w, r, "Snippet not found")
@@ -87,14 +87,14 @@ func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 		ExpiresTime: expirationTime,
 	}
 
-	id, err := h.Service.Insert(snippetData, "Africa/Cairo")
+	id, err := h.Service.Insert(snippetData)
 	if err != nil {
 		fmt.Println(snippetData)
 		h.errorHandler.InternalServerError(w, r, err, "Error creating snippet")
 		return
 	}
 
-	m, err := h.Service.Get(id, "Africa/Cairo")
+	m, err := h.Service.Get(id)
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error getting snippet")
 		return
@@ -108,13 +108,12 @@ func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *SnippetHandler) ListLatestSnippets(w http.ResponseWriter, r *http.Request) {
-	snippets, err := h.Service.Latest("Africa/Cairo")
+	snippets, err := h.Service.Latest()
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error retrieving latest snippets")
 		return
 	}
 
-	fmt.Println(snippets)
 	for _, snippet := range snippets {
 		data := NewViewData(snippet)
 		err = ViewSnippet(data).Render(r.Context(), w)

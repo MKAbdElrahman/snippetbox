@@ -2,10 +2,8 @@
 
 ## TODO
 
-- FIX The TimeZone System
 - Prevent Access To Partial Page Components
 
-- Feature: Delete Snippet with animation
 - Feature: Edit Snippets Form
 
 ## Architecture
