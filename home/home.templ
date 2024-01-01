@@ -10,6 +10,7 @@ templ HomePage() {
 		<div class="container mx-auto mt-8">
 			<!-- Navbar -->
 			@navbar()
+			@flash()
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 				<div class="bg-gray-700 p-6 rounded-lg shadow-md mb-8">
 					<div hx-get="/snippets/form/create" hx-target="this" hx-swap="innerHTML" hx-trigger="revealed"></div>
@@ -24,6 +25,10 @@ templ HomePage() {
 	}
 }
 
+templ flash() {
+	<div id="flash"></div>
+}
+
 templ navbar() {
 	<nav class="bg-green-700 p-4 mb-8">
 		<div class="container mx-auto flex items-center justify-between">
@@ -35,17 +40,17 @@ templ navbar() {
 			</ul>
 			<button class="md:hidden text-white focus:outline-none">
 				<svg
- 					class="h-6 w-6"
- 					fill="none"
- 					stroke="currentColor"
- 					viewBox="0 0 24 24"
- 					xmlns="http://www.w3.org/2000/svg"
+					class="h-6 w-6"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
 				>
 					<path
- 						stroke-linecap="round"
- 						stroke-linejoin="round"
- 						stroke-width="2"
- 						d="M4 6h16M4 12h16m-7 6h7"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M4 6h16M4 12h16m-7 6h7"
 					></path>
 				</svg>
 			</button>

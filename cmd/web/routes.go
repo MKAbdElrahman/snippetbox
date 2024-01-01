@@ -9,10 +9,12 @@ import (
 	"snippetbox/httperror"
 	"snippetbox/snippet"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
 )
 
-func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, db *sql.DB) {
+func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, sessionManager *scs.SessionManager, db *sql.DB) {
+
 	errorHandler := httperror.NewHandler(logger)
 
 	// Serve static files
@@ -29,8 +31,11 @@ func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, db *sql.DB) {
 	mux.Get("/", homeHandler.HandleRenderFullPage)
 
 	// Snippet routes
-	snippetHandler := snippet.NewHandler(logger, db)
+	snippetHandler := snippet.NewHandler(logger, sessionManager, db)
 	mux.Route("/snippets", func(r chi.Router) {
+
+		r.Use(sessionManager.LoadAndSave)
+
 		r.Get("/", snippetHandler.ListLatestSnippets)
 		r.Get("/{id}", snippetHandler.ViewSnippet)
 		r.Delete("/{id}", snippetHandler.DeleteSnippet)

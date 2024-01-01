@@ -11,15 +11,17 @@ type ViewData struct {
 	Content string
 	Created string
 	Expires string
+	Flash   string
 }
 
-func NewViewData(m *Model) ViewData {
+func NewViewData(m *Model, Flash string) ViewData {
 	return ViewData{
 		ID:      fmt.Sprint(m.ID),
 		Title:   m.Title,
 		Content: m.Content,
 		Created: formatCreateTime(m.Created),
 		Expires: formatExpireTime(m.Expires),
+		Flash:   Flash,
 	}
 }
 
@@ -35,7 +37,7 @@ func formatExpireTime(t time.Time) string {
 	return fmt.Sprintf("%s", t.Format(layout))
 }
 
-templ ViewSnippet(data ViewData) {
+templ ViewSnippet(c context.Context, data ViewData) {
 	<div class="snippet">
 		<div class="bg-gray-700 p-6 rounded-lg shadow-md mb-4">
 			<div class="flex justify-end mb-2">
@@ -62,5 +64,17 @@ templ ViewSnippet(data ViewData) {
 			<!-- Hidden input field for snippet ID -->
 			<input type="hidden" name="snippet_id" value="{ data.ID }"/>
 		</div>
+	</div>
+	<div id="flash" hx-swap-oob="true">
+		if data.Flash != "" {
+			<div hx-ext="remove-me">
+				<!-- Removes this div after 3 second -->
+				<div remove-me="3s">
+					<div id="flash" class="bg-green-800 text-white p-4 rounded-md mt-4">
+						{ data.Flash }
+					</div>
+				</div>
+			</div>
+		}
 	</div>
 }

@@ -12,18 +12,21 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
 )
 
 type SnippetHandler struct {
-	errorHandler *httperror.Handler
-	Service      *Service
+	errorHandler   *httperror.Handler
+	Service        *Service
+	sessionManager *scs.SessionManager
 }
 
-func NewHandler(logger *logger.Logger, db *sql.DB) *SnippetHandler {
+func NewHandler(logger *logger.Logger, sessionManager *scs.SessionManager, db *sql.DB) *SnippetHandler {
 	return &SnippetHandler{
-		errorHandler: httperror.NewHandler(logger),
-		Service:      NewService(db),
+		errorHandler:   httperror.NewHandler(logger),
+		Service:        NewService(db),
+		sessionManager: sessionManager,
 	}
 }
 
@@ -50,9 +53,11 @@ func (h *SnippetHandler) ViewSnippet(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	data := NewViewData(snippet)
 
-	err = ViewSnippet(data).Render(r.Context(), w)
+	flash := ""
+	data := NewViewData(snippet, flash)
+
+	err = ViewSnippet(r.Context(), data).Render(r.Context(), w)
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error rendering snippet view")
 		return
@@ -89,7 +94,6 @@ func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 
 	id, err := h.Service.Insert(snippetData)
 	if err != nil {
-		fmt.Println(snippetData)
 		h.errorHandler.InternalServerError(w, r, err, "Error creating snippet")
 		return
 	}
@@ -100,11 +104,14 @@ func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ViewSnippet(NewViewData(m)).Render(r.Context(), w)
+	flash := "Snippet successfully created!"
+
+	err = ViewSnippet(r.Context(), NewViewData(m, flash)).Render(r.Context(), w)
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error rendering snippet view")
 		return
 	}
+
 }
 
 func (h *SnippetHandler) ListLatestSnippets(w http.ResponseWriter, r *http.Request) {
@@ -115,8 +122,10 @@ func (h *SnippetHandler) ListLatestSnippets(w http.ResponseWriter, r *http.Reque
 	}
 
 	for _, snippet := range snippets {
-		data := NewViewData(snippet)
-		err = ViewSnippet(data).Render(r.Context(), w)
+		flash := ""
+		data := NewViewData(snippet, flash)
+
+		err = ViewSnippet(r.Context(), data).Render(r.Context(), w)
 		if err != nil {
 			h.errorHandler.InternalServerError(w, r, err, "Error rendering snippet view")
 			return

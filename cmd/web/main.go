@@ -7,7 +7,10 @@ import (
 	"os"
 	"snippetbox/foundation/logger"
 	"snippetbox/httperror"
+	"time"
 
+	"github.com/alexedwards/scs/mysqlstore"
+	"github.com/alexedwards/scs/v2"
 	"github.com/ardanlabs/conf/v3"
 	"github.com/justinas/alice"
 
@@ -70,8 +73,13 @@ func main() {
 
 	logger.Info("connected to mysql", map[string]any{})
 
+	// Session Manager
+	sessionManager := scs.New()
+	sessionManager.Store = mysqlstore.New(db)
+	sessionManager.Lifetime = 12 * time.Hour
+
 	mux := chi.NewRouter()
-	RegisterRoutes(mux, logger, db)
+	RegisterRoutes(mux, logger, sessionManager, db)
 
 	middleware := alice.New(
 		PanicRecoverMiddleware(httperror.NewHandler(logger)),
