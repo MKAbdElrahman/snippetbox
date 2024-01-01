@@ -39,6 +39,9 @@ func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, db *sql.DB) {
 		r.Get("/form/search", snippetHandler.GetSearchSnippetForm)
 
 		r.Post("/", snippetHandler.CreateSnippet)
+
+		r.Post("/title/validate", snippetHandler.ValidateSnippetTitle)
+
 	})
 
 	// Test route

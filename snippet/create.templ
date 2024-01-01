@@ -1,5 +1,7 @@
 package snippet 
 
+import "time"
+
 templ CreateSnippetForm() {
 	<form
  		action="/snippets"
@@ -7,16 +9,38 @@ templ CreateSnippetForm() {
  		hx-post="/snippets"
  		hx-swap="afterbegin"
  		hx-target="#snippets-timeline"
+ 		hx-on:submit="this.reset()"
 	>
 		<div class="mb-4">
-			<input type="text" name="title" id="title" placeholder="Enter a title" class="w-full border p-2 rounded bg-gray-800 text-white"/> <!-- Dark mode input -->
+			<input
+ 				type="text"
+ 				name="title"
+ 				id="title"
+ 				placeholder="Enter a title"
+				minlength="3"
+				maxlength="100"
+				required
+ 				class="w-full border p-2 rounded bg-gray-800 text-white"
+ 				hx-trigger="change, keyup delay:200ms changed"
+ 				hx-post="/snippets/title/validate"
+ 				hx-target="next .validation-error"
+ 				hx-swap="innerHTML"
+			/>
+			<span class="validation-error text-red-500"></span>
 		</div>
 		<div class="mb-4">
 			<textarea name="content" id="content" placeholder="Write your snippet..." class="w-full border p-2 rounded bg-gray-800 text-white"></textarea> <!-- Dark mode textarea -->
 		</div>
 		<div class="mb-4">
 			<label for="expiresDate" class="block text-sm font-medium text-gray-300">Delete on:</label> <!-- Lighter text color for labels -->
-			<input type="date" name="expiresDate" id="expiresDate" class="w-full border p-2 rounded bg-gray-800 text-white" required/>
+			<input
+ 				type="date"
+ 				name="expiresDate"
+ 				id="expiresDate"
+ 				class="w-full border p-2 rounded bg-gray-800 text-white"
+ 				min={ time.Now().Format("2006-01-02") }
+ 				required
+			/>
 			<input type="time" name="expiresTime" id="expiresTime" class="w-full border p-2 rounded bg-gray-800 text-white" required/>
 		</div>
 		<div class="flex items-center">

@@ -1,6 +1,6 @@
 module snippetbox
 
-require github.com/a-h/templ v0.2.476
+require github.com/a-h/templ v0.2.501
 
 require (
 	github.com/ardanlabs/conf/v3 v3.1.7
@@ -16,4 +16,4 @@ require (
 	golang.org/x/sys v0.14.0 // indirect
 )
 
-go 1.21.4
+go 1.21

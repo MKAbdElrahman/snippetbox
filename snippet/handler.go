@@ -8,7 +8,9 @@ import (
 	"snippetbox/foundation/logger"
 	"snippetbox/httperror"
 	"strconv"
+	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -168,4 +170,22 @@ func (h *SnippetHandler) DeleteSnippet(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+}
+
+func (h *SnippetHandler) ValidateSnippetTitle(w http.ResponseWriter, r *http.Request) {
+
+	err := r.ParseForm()
+	if err != nil {
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		return
+	}
+
+	title := r.FormValue("title")
+	if strings.TrimSpace(title) == "" {
+		fmt.Fprint(w, "This field cannot be blank")
+	}
+
+	if utf8.RuneCountInString(title) > 100 {
+		fmt.Fprint(w, "This field cannot be more than 100 characters long")
+	}
 }
