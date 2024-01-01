@@ -166,12 +166,12 @@ func ViewSnippet(c context.Context, data ViewData) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var11 := ` Removes this div after 3 second `
+			templ_7745c5c3_Var11 := ` Removes this div after 3 seconds `
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var11)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("--><div remove-me=\"3s\"><div id=\"flash\" class=\"bg-green-800 text-white p-4 rounded-md mt-4\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("--><div remove-me=\"3s\"><div id=\"flash\" class=\"bg-green-700 text-white p-4 rounded-md mt-4 transition-opacity duration-[3000ms] ease-in-out opacity-0 hover:opacity-100\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

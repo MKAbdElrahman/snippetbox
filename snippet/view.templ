@@ -68,9 +68,9 @@ templ ViewSnippet(c context.Context, data ViewData) {
 	<div id="flash" hx-swap-oob="true">
 		if data.Flash != "" {
 			<div hx-ext="remove-me">
-				<!-- Removes this div after 3 second -->
+				<!-- Removes this div after 3 seconds -->
 				<div remove-me="3s">
-					<div id="flash" class="bg-green-800 text-white p-4 rounded-md mt-4">
+					<div id="flash" class="bg-green-700 text-white p-4 rounded-md mt-4 transition-opacity duration-[3000ms] ease-in-out opacity-0 hover:opacity-100">
 						{ data.Flash }
 					</div>
 				</div>
