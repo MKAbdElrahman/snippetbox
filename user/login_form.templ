@@ -1,0 +1,23 @@
+package user
+
+import "snippetbox/ui/html"
+
+templ LoginForm() {
+	@html.Base(html.RootLayoutData{
+		Titel:     "Login - Snippetbox",
+		BodyClass: "bg-gray-800 mt-8 mx-auto",
+	}) {
+		<div class="container mx-auto mt-8">
+			@navbar()
+			<div class="flex items-center justify-center h-screen">
+				<form class="bg-white p-8 rounded shadow-md w-96" action="/user/login" method="post">
+					<label class="block mb-2" for="email">Email:</label> <!-- Added email field -->
+					<input class="w-full p-2 mb-4 border border-gray-300 rounded" type="email" id="email" name="email" required/>
+					<label class="block mb-2" for="password">Password:</label>
+					<input class="w-full p-2 mb-4 border border-gray-300 rounded" type="password" id="password" name="password" required/>
+					<button class="bg-green-500 text-white p-2 rounded w-full" type="submit">Login</button>
+				</form>
+			</div>
+		</div>
+	}
+}

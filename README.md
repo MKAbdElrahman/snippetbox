@@ -56,6 +56,4 @@
 
 ## TODO
 
-- Prevent Access To Partial Page Components
-
 - Feature: Edit Snippets Form

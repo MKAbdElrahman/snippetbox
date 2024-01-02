@@ -8,6 +8,7 @@ import (
 	"snippetbox/home"
 	"snippetbox/httperror"
 	"snippetbox/snippet"
+	"snippetbox/user"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/go-chi/chi/v5"
@@ -28,13 +29,36 @@ func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, sessionManager *scs.Ses
 
 	// Home routes
 	homeHandler := home.NewHandler(logger)
-	mux.Get("/", homeHandler.HandleRenderFullPage)
+
+	// User Routes
+	userHandler := user.NewHandler(logger, sessionManager, db)
+
+	mux.Route("/", func(r chi.Router) {
+		r.Use(sessionManager.LoadAndSave)
+		r.Use(RequireAuthentication(sessionManager))
+		r.Get("/", homeHandler.HandleRenderFullPage)
+	})
+
+	mux.Route("/user", func(r chi.Router) {
+
+		r.Use(sessionManager.LoadAndSave)
+
+		r.Get("/signup", userHandler.GetUserSignUpForm)
+		r.Post("/signup", userHandler.HandleSignUpUser)
+
+		r.Get("/login", userHandler.GetUserLoginForm)
+		r.Post("/login", userHandler.HandleLoginUser)
+
+		r.Post("/logout", userHandler.HandleLogoutUser)
+
+	})
 
 	// Snippet routes
 	snippetHandler := snippet.NewHandler(logger, sessionManager, db)
 	mux.Route("/snippets", func(r chi.Router) {
 
 		r.Use(sessionManager.LoadAndSave)
+		r.Use(RequireAuthentication(sessionManager))
 
 		r.Get("/", snippetHandler.ListLatestSnippets)
 		r.Get("/{id}", snippetHandler.ViewSnippet)

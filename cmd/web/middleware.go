@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/alexedwards/scs/v2"
 )
 
 func SecureHeadersMiddleware(next http.Handler) http.Handler {
@@ -46,4 +48,20 @@ func PanicRecoverMiddleware(errorHandler ErrorHandler) func(http.Handler) http.H
 		return http.HandlerFunc(f)
 	}
 	return m
+}
+func RequireAuthentication(sessionManager *scs.SessionManager) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+			isAuthenticated := sessionManager.Exists(r.Context(), "authenticatedUserID")
+
+			if !isAuthenticated {
+				http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+				return
+			}
+
+			w.Header().Add("Cache-Control", "no-store")
+			next.ServeHTTP(w, r)
+		})
+	}
 }

@@ -36,7 +36,11 @@ templ navbar() {
 				<a href="/" class="text-white font-semibold text-xl">Snippetbox</a>
 			</div>
 			<ul class="hidden md:flex space-x-4">
-				<li><a href="#" class="text-white hover:text-gray-300">Sign Out</a></li>
+				<li>
+					<form action="/user/logout" method="POST">
+						<button>Logout</button>
+					</form>
+				</li>
 			</ul>
 			<button class="md:hidden text-white focus:outline-none">
 				<svg
