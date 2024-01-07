@@ -36,6 +36,7 @@ func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, sessionManager *scs.Ses
 	mux.Route("/", func(r chi.Router) {
 		r.Use(sessionManager.LoadAndSave)
 		r.Use(noSurf)
+		r.Use(authenticate(sessionManager, userHandler.UserService, errorHandler))
 		r.Use(RequireAuthentication(sessionManager))
 
 		r.Get("/", homeHandler.HandleRenderFullPage)
@@ -45,6 +46,7 @@ func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, sessionManager *scs.Ses
 
 		r.Use(sessionManager.LoadAndSave)
 		r.Use(noSurf)
+		r.Use(authenticate(sessionManager, userHandler.UserService, errorHandler))
 
 		r.Get("/signup", userHandler.GetUserSignUpForm)
 		r.Post("/signup", userHandler.HandleSignUpUser)
@@ -62,6 +64,7 @@ func RegisterRoutes(mux *chi.Mux, logger *logger.Logger, sessionManager *scs.Ses
 
 		r.Use(sessionManager.LoadAndSave)
 		r.Use(noSurf)
+		r.Use(authenticate(sessionManager, userHandler.UserService, errorHandler))
 		r.Use(RequireAuthentication(sessionManager))
 
 		r.Get("/", snippetHandler.ListLatestSnippets)

@@ -67,3 +67,10 @@ func (s *UserService) Login(email, password string) (User, error) {
 
 	return user, nil
 }
+
+func (s *UserService) Exists(id int) (bool, error) {
+	var exists bool
+	stmt := "SELECT EXISTS(SELECT true FROM users WHERE id = ?)"
+	err := s.DB.QueryRow(stmt, id).Scan(&exists)
+	return exists, err
+}

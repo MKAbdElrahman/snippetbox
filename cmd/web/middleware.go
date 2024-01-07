@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/justinas/nosurf"
+
+	"snippetbox/httperror"
+	"snippetbox/user"
 )
 
 func SecureHeadersMiddleware(next http.Handler) http.Handler {
@@ -54,8 +58,12 @@ func RequireAuthentication(sessionManager *scs.SessionManager) func(next http.Ha
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-			isAuthenticated := sessionManager.Exists(r.Context(), "authenticatedUserID")
+			isAuthenticated, ok := r.Context().Value(isAuthenticatedContextKey).(bool)
 
+			if !ok {
+				// FIXME!
+				fmt.Println("not ok")
+			}
 			if !isAuthenticated {
 				http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 				return
@@ -75,4 +83,27 @@ func noSurf(next http.Handler) http.Handler {
 		Secure:   true,
 	})
 	return csrfHandler
+}
+
+func authenticate(sessionManager *scs.SessionManager, userService *user.UserService, errorHandler *httperror.Handler) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			id := sessionManager.GetInt(r.Context(), "authenticatedUserID")
+			if id == 0 {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			exists, err := userService.Exists(id)
+			if err != nil {
+				errorHandler.InternalServerError(w, r, err, "internal server error")
+				return
+			}
+			if exists {
+				ctx := context.WithValue(r.Context(), isAuthenticatedContextKey, true)
+				r = r.WithContext(ctx)
+			}
+			next.ServeHTTP(w, r)
+		})
+	}
 }
