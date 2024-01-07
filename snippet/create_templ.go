@@ -11,8 +11,10 @@ import "io"
 import "bytes"
 
 import "time"
+import "net/http"
+import "github.com/justinas/nosurf"
 
-func CreateSnippetForm() templ.Component {
+func CreateSnippetForm(r *http.Request) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -25,7 +27,15 @@ func CreateSnippetForm() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/snippets\" method=\"POST\" hx-post=\"/snippets\" hx-swap=\"afterbegin\" hx-target=\"#snippets-timeline\" hx-on:submit=\"this.reset()\"><div class=\"mb-4\"><input type=\"text\" name=\"title\" id=\"title\" placeholder=\"Enter a title\" minlength=\"3\" maxlength=\"100\" required class=\"w-full border p-2 rounded bg-gray-800 text-white\" hx-trigger=\"change, keyup delay:200ms changed\" hx-post=\"/snippets/title/validate\" hx-target=\"next .validation-error\" hx-swap=\"innerHTML\"> <span class=\"validation-error text-red-500\"></span></div><div class=\"mb-4\"><textarea name=\"content\" id=\"content\" placeholder=\"Write your snippet...\" class=\"w-full border p-2 rounded bg-gray-800 text-white\"></textarea><!--")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/snippets\" method=\"POST\" hx-post=\"/snippets\" hx-swap=\"afterbegin\" hx-target=\"#snippets-timeline\" hx-on:submit=\"this.reset()\"><input type=\"hidden\" name=\"csrf_token\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(nosurf.Token(r)))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div class=\"mb-4\"><input type=\"text\" name=\"title\" id=\"title\" placeholder=\"Enter a title\" minlength=\"3\" maxlength=\"100\" required class=\"w-full border p-2 rounded bg-gray-800 text-white\" hx-trigger=\"change, keyup delay:200ms changed\" hx-post=\"/snippets/title/validate\" hx-target=\"next .validation-error\" hx-swap=\"innerHTML\"> <span class=\"validation-error text-red-500\"></span></div><div class=\"mb-4\"><textarea name=\"content\" id=\"content\" placeholder=\"Write your snippet...\" class=\"w-full border p-2 rounded bg-gray-800 text-white\"></textarea><!--")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

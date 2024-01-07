@@ -2,14 +2,17 @@ package home
 
 import "snippetbox/ui/html"
 
-templ HomePage() {
+import "github.com/justinas/nosurf"
+import "net/http"
+
+templ HomePage(r *http.Request) {
 	@html.Base(html.RootLayoutData{
 		Titel:     "Home - Snippetbox",
 		BodyClass: "bg-gray-800 text-white min-h-screen font-sans", // Dark mode background and text color
 	}) {
 		<div class="container mx-auto mt-8">
 			<!-- Navbar -->
-			@navbar()
+			@navbar(r)
 			@flash()
 			<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 				<div class="bg-gray-700 p-6 rounded-lg shadow-md mb-8">
@@ -29,7 +32,7 @@ templ flash() {
 	<div id="flash"></div>
 }
 
-templ navbar() {
+templ navbar(r *http.Request) {
 	<nav class="bg-green-700 p-4 mb-8">
 		<div class="container mx-auto flex items-center justify-between">
 			<div class="flex items-center">
@@ -38,6 +41,7 @@ templ navbar() {
 			<ul class="hidden md:flex space-x-4">
 				<li>
 					<form action="/user/logout" method="POST">
+						<input type="hidden" name="csrf_token" value={ nosurf.Token(r) }/>
 						<button>Logout</button>
 					</form>
 				</li>

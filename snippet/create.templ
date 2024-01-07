@@ -1,30 +1,33 @@
 package snippet 
 
 import "time"
+import "net/http"
+import "github.com/justinas/nosurf"
 
-templ CreateSnippetForm() {
+templ CreateSnippetForm(r *http.Request) {
 	<form
- 		action="/snippets"
- 		method="POST"
- 		hx-post="/snippets"
- 		hx-swap="afterbegin"
- 		hx-target="#snippets-timeline"
- 		hx-on:submit="this.reset()"
+		action="/snippets"
+		method="POST"
+		hx-post="/snippets"
+		hx-swap="afterbegin"
+		hx-target="#snippets-timeline"
+		hx-on:submit="this.reset()"
 	>
+		<input type="hidden" name="csrf_token" value={ nosurf.Token(r) }/>
 		<div class="mb-4">
 			<input
- 				type="text"
- 				name="title"
- 				id="title"
- 				placeholder="Enter a title"
+				type="text"
+				name="title"
+				id="title"
+				placeholder="Enter a title"
 				minlength="3"
 				maxlength="100"
 				required
- 				class="w-full border p-2 rounded bg-gray-800 text-white"
- 				hx-trigger="change, keyup delay:200ms changed"
- 				hx-post="/snippets/title/validate"
- 				hx-target="next .validation-error"
- 				hx-swap="innerHTML"
+				class="w-full border p-2 rounded bg-gray-800 text-white"
+				hx-trigger="change, keyup delay:200ms changed"
+				hx-post="/snippets/title/validate"
+				hx-target="next .validation-error"
+				hx-swap="innerHTML"
 			/>
 			<span class="validation-error text-red-500"></span>
 		</div>
@@ -34,19 +37,19 @@ templ CreateSnippetForm() {
 		<div class="mb-4">
 			<label for="expiresDate" class="block text-sm font-medium text-gray-300">Delete on:</label> <!-- Lighter text color for labels -->
 			<input
- 				type="date"
- 				name="expiresDate"
- 				id="expiresDate"
- 				class="w-full border p-2 rounded bg-gray-800 text-white"
- 				min={ time.Now().Format("2006-01-02") }
- 				required
+				type="date"
+				name="expiresDate"
+				id="expiresDate"
+				class="w-full border p-2 rounded bg-gray-800 text-white"
+				min={ time.Now().Format("2006-01-02") }
+				required
 			/>
 			<input type="time" name="expiresTime" id="expiresTime" class="w-full border p-2 rounded bg-gray-800 text-white" required/>
 		</div>
 		<div class="flex items-center">
 			<button
- 				type="submit"
- 				class="bg-green-500 text-white py-2 px-4 rounded-full"
+				type="submit"
+				class="bg-green-500 text-white py-2 px-4 rounded-full"
 			>Publish Snippet</button>
 		</div>
 	</form>

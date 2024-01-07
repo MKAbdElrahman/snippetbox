@@ -135,7 +135,7 @@ func (h *SnippetHandler) ListLatestSnippets(w http.ResponseWriter, r *http.Reque
 }
 
 func (h *SnippetHandler) GetNewSnippetForm(w http.ResponseWriter, r *http.Request) {
-	err := CreateSnippetForm().Render(r.Context(), w)
+	err := CreateSnippetForm(r).Render(r.Context(), w)
 
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error rendering full page")
@@ -144,7 +144,7 @@ func (h *SnippetHandler) GetNewSnippetForm(w http.ResponseWriter, r *http.Reques
 }
 
 func (h *SnippetHandler) GetSearchSnippetForm(w http.ResponseWriter, r *http.Request) {
-	err := SearchSnippetForm().Render(r.Context(), w)
+	err := SearchSnippetForm(r).Render(r.Context(), w)
 
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error rendering full page")

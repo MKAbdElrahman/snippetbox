@@ -10,7 +10,10 @@ import "context"
 import "io"
 import "bytes"
 
-func SearchSnippetForm() templ.Component {
+import "github.com/justinas/nosurf"
+import "net/http"
+
+func SearchSnippetForm(r *http.Request) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -32,7 +35,15 @@ func SearchSnippetForm() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("--><div class=\"mb-4 flex items-center space-x-4\"><input type=\"text\" placeholder=\"Search...\" class=\"w-full border p-2 rounded bg-gray-800 text-white\"> <button class=\"bg-green-500 text-white py-2 px-4 rounded-full\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("--><div class=\"mb-4 flex items-center space-x-4\"><input type=\"hidden\" name=\"csrf_token\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(nosurf.Token(r)))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <input type=\"text\" placeholder=\"Search...\" class=\"w-full border p-2 rounded bg-gray-800 text-white\"> <button class=\"bg-green-500 text-white py-2 px-4 rounded-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

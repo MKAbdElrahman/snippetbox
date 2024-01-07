@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/justinas/nosurf"
 )
 
 func SecureHeadersMiddleware(next http.Handler) http.Handler {
@@ -64,4 +65,14 @@ func RequireAuthentication(sessionManager *scs.SessionManager) func(next http.Ha
 			next.ServeHTTP(w, r)
 		})
 	}
+}
+
+func noSurf(next http.Handler) http.Handler {
+	csrfHandler := nosurf.New(next)
+	csrfHandler.SetBaseCookie(http.Cookie{
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   true,
+	})
+	return csrfHandler
 }

@@ -1,10 +1,10 @@
-
-
 package user
 
 import "snippetbox/ui/html"
+import "net/http"
+import "github.com/justinas/nosurf"
 
-templ SignUpForm() {
+templ SignUpForm(r *http.Request) {
 	@html.Base(html.RootLayoutData{
 		Titel:     "Sign Up - Snippetbox",
 		BodyClass: "bg-gray-800 mt-8 mx-auto", 
@@ -13,6 +13,8 @@ templ SignUpForm() {
 			@navbar()
 			<div class="  flex  items-center justify-center h-screen ">
 				<form class="bg-white p-8 rounded shadow-md w-96" action="/user/signup" method="post">
+					<!-- Include the CSRF token -->
+					<input type="hidden" name="csrf_token" value={ nosurf.Token(r) }/>
 					<label class="block mb-2" for="username">Username:</label>
 					<input class="w-full p-2 mb-4 border border-gray-300 rounded" type="text" id="username" name="username" required/>
 					<label class="block mb-2" for="email">Email:</label>

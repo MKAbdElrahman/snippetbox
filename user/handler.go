@@ -25,7 +25,7 @@ func NewHandler(logger *logger.Logger, sessionManager *scs.SessionManager, db *s
 }
 
 func (h *Handler) GetUserSignUpForm(w http.ResponseWriter, r *http.Request) {
-	err := SignUpForm().Render(r.Context(), w)
+	err := SignUpForm(r).Render(r.Context(), w)
 
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error rendering form")
@@ -34,7 +34,7 @@ func (h *Handler) GetUserSignUpForm(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetUserLoginForm(w http.ResponseWriter, r *http.Request) {
-	err := LoginForm().Render(r.Context(), w)
+	err := LoginForm(r).Render(r.Context(), w)
 
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error rendering form")

@@ -20,7 +20,7 @@ func NewHandler(logger *logger.Logger) *Handler {
 
 func (h *Handler) HandleRenderFullPage(w http.ResponseWriter, r *http.Request) {
 
-	err := HomePage().Render(r.Context(), w)
+	err := HomePage(r).Render(r.Context(), w)
 
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error rendering full page")
