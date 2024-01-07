@@ -1,8 +1,12 @@
 package snippet
 
+import "github.com/justinas/nosurf"
+
 import (
 	"fmt"
 	"time"
+	"net/http"
+	"encoding/json"
 )
 
 type ViewData struct {
@@ -37,7 +41,17 @@ func formatExpireTime(t time.Time) string {
 	return fmt.Sprintf("%s", t.Format(layout))
 }
 
-templ ViewSnippet(c context.Context, data ViewData) {
+func newCSRFToken(r *http.Request) string {
+	bs, _ := json.Marshal(struct {
+		XCSRFToken string `json:"X-CSRF-Token"`
+	}{
+		XCSRFToken: nosurf.Token(r),
+	})
+
+	return string(bs)
+}
+
+templ ViewSnippet(r *http.Request, data ViewData) {
 	<div class="snippet">
 		<div class="bg-gray-700 p-6 rounded-lg shadow-md mb-4">
 			<div class="flex justify-end mb-2">
@@ -49,10 +63,14 @@ templ ViewSnippet(c context.Context, data ViewData) {
 					hx-target="closest .snippet"
 					hx-swap="outerHTML swap:1s scroll:bottom"
 					transition:true
+					hx-headers={ newCSRFToken(r) }
 				>
 					Delete
 				</button>
-				<button class="text-sm text-gray-500 hover:text-blue-500">
+				<button
+					class="text-sm text-gray-500 hover:text-blue-500"
+					hx-headers={ newCSRFToken(r) }
+				>
 					Update
 				</button>
 			</div>

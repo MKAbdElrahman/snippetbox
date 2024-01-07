@@ -57,7 +57,7 @@ func (h *SnippetHandler) ViewSnippet(w http.ResponseWriter, r *http.Request) {
 	flash := ""
 	data := NewViewData(snippet, flash)
 
-	err = ViewSnippet(r.Context(), data).Render(r.Context(), w)
+	err = ViewSnippet(r, data).Render(r.Context(), w)
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error rendering snippet view")
 		return
@@ -106,7 +106,7 @@ func (h *SnippetHandler) CreateSnippet(w http.ResponseWriter, r *http.Request) {
 
 	flash := "Snippet successfully created!"
 
-	err = ViewSnippet(r.Context(), NewViewData(m, flash)).Render(r.Context(), w)
+	err = ViewSnippet(r, NewViewData(m, flash)).Render(r.Context(), w)
 	if err != nil {
 		h.errorHandler.InternalServerError(w, r, err, "Error rendering snippet view")
 		return
@@ -125,7 +125,7 @@ func (h *SnippetHandler) ListLatestSnippets(w http.ResponseWriter, r *http.Reque
 		flash := ""
 		data := NewViewData(snippet, flash)
 
-		err = ViewSnippet(r.Context(), data).Render(r.Context(), w)
+		err = ViewSnippet(r, data).Render(r.Context(), w)
 		if err != nil {
 			h.errorHandler.InternalServerError(w, r, err, "Error rendering snippet view")
 			return
@@ -153,6 +153,7 @@ func (h *SnippetHandler) GetSearchSnippetForm(w http.ResponseWriter, r *http.Req
 }
 
 func (h *SnippetHandler) DeleteSnippet(w http.ResponseWriter, r *http.Request) {
+
 	// Extract the snippet ID from the URL parameter.
 	id, err := strconv.Atoi(chi.URLParam(r, "id"))
 	if err != nil {
