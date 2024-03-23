@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/charmbracelet/log"
+	"github.com/mkabdelrahman/snippetbox/handler"
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
@@ -13,14 +14,21 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
+	// CONFIG
 	const port = 3000
 	host := "localhost"
 	addr := fmt.Sprintf("%s:%d", host, port)
 
+	// ROUTER
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /", home)
+	snippetHandler := handler.NewSnippetHandler()
 
+	mux.HandleFunc("GET /{$}", home)
+	mux.HandleFunc("GET /snippet/view/{id}", snippetHandler.View)
+	mux.HandleFunc("GET /snippet/create", snippetHandler.ViewCreateForm)
+
+	// SERVER
 	log.Info("starting server", "host", host, "port", port)
 	err := http.ListenAndServe(addr, mux)
 	log.Fatal("server error", err)
