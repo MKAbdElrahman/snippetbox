@@ -9,6 +9,7 @@ import (
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Server", "Go")
 	w.Write([]byte("Hello from Snippetbox"))
 }
 
@@ -27,6 +28,7 @@ func main() {
 	mux.HandleFunc("GET /{$}", home)
 	mux.HandleFunc("GET /snippet/view/{id}", snippetHandler.View)
 	mux.HandleFunc("GET /snippet/create", snippetHandler.ViewCreateForm)
+	mux.HandleFunc("POST /snippet/create", snippetHandler.Create)
 
 	// SERVER
 	log.Info("starting server", "host", host, "port", port)
