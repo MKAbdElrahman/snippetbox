@@ -1,16 +1,22 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
 	"github.com/charmbracelet/log"
 	"github.com/mkabdelrahman/snippetbox/handler"
+	"github.com/mkabdelrahman/snippetbox/view/pages"
 )
 
 func home(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Server", "Go")
-	w.Write([]byte("Hello from Snippetbox"))
+	component := pages.Home()
+	err := component.Render(context.Background(), w)
+	if err != nil {
+		http.Error(w, "internal server error", http.StatusInternalServerError)
+		return
+	}
 }
 
 func main() {
