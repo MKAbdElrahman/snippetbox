@@ -36,7 +36,7 @@ func base(title string, main templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" - Snippetbox</title></head><body><header><h1><a href=\"/\">Snippetbox</a></h1></header>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" - Snippetbox</title><link rel=\"stylesheet\" href=\"/static/css/main.css\"><link rel=\"shortcut icon\" href=\"/static/img/favicon.ico\" type=\"image/x-icon\"><link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700\"></head><body><header><h1><a href=\"/\">Snippetbox</a></h1></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -52,7 +52,7 @@ func base(title string, main templ.Component) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><footer>Powered by <a href=\"https://golang.org/\">Go</a></footer></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><footer>Powered by <a href=\"https://golang.org/\">Go</a></footer><script src=\"/static/js/main.js\" type=\"text/javascript\"></script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

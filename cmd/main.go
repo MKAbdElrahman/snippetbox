@@ -29,9 +29,15 @@ func main() {
 	// ROUTER
 	mux := http.NewServeMux()
 
-	snippetHandler := handler.NewSnippetHandler()
-
+	// home page
 	mux.HandleFunc("GET /{$}", home)
+
+	// static files
+	fileServer := http.FileServer(http.Dir("./view/pages/static/"))
+	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
+
+	// snippets
+	snippetHandler := handler.NewSnippetHandler()
 	mux.HandleFunc("GET /snippet/view/{id}", snippetHandler.View)
 	mux.HandleFunc("GET /snippet/create", snippetHandler.ViewCreateForm)
 	mux.HandleFunc("POST /snippet/create", snippetHandler.Create)
