@@ -2,14 +2,19 @@ package handler
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strconv"
 )
 
-type SnippetHandler struct{}
+type SnippetHandler struct {
+	logger *slog.Logger
+}
 
-func NewSnippetHandler() *SnippetHandler {
-	return &SnippetHandler{}
+func NewSnippetHandler(logger *slog.Logger) *SnippetHandler {
+	return &SnippetHandler{
+		logger: logger,
+	}
 }
 
 func (h *SnippetHandler) Create(w http.ResponseWriter, r *http.Request) {
