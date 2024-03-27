@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"flag"
+	"log/slog"
 	"net/http"
+	"os"
 
-	"github.com/charmbracelet/log"
 	"github.com/mkabdelrahman/snippetbox/handler"
 	"github.com/mkabdelrahman/snippetbox/view/pages"
 )
@@ -22,9 +23,18 @@ func home(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	// CONFIG
-	addr := flag.String("addr", ":3000", "HTTP network address")
+	var config struct {
+		addr string
+	}
+
+	flag.StringVar(&config.addr, "addr", ":3000", "HTTP network address")
 	flag.Parse()
 
+	// LOGGER
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+		// AddSource: true,
+	}))
 	// ROUTER
 	mux := http.NewServeMux()
 
@@ -42,7 +52,8 @@ func main() {
 	mux.HandleFunc("POST /snippet/create", snippetHandler.Create)
 
 	// SERVER
-	log.Info("starting server", "addr", *addr)
-	err := http.ListenAndServe(*addr, mux)
-	log.Fatal("server error", err)
+	logger.Info("starting server", slog.String("addr", config.addr))
+	err := http.ListenAndServe(config.addr, mux)
+	logger.Error(err.Error())
+	os.Exit(1)
 }
