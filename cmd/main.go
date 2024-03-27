@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"flag"
 	"net/http"
 
 	"github.com/charmbracelet/log"
@@ -22,9 +22,8 @@ func home(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	// CONFIG
-	const port = 3000
-	host := "localhost"
-	addr := fmt.Sprintf("%s:%d", host, port)
+	addr := flag.String("addr", ":3000", "HTTP network address")
+	flag.Parse()
 
 	// ROUTER
 	mux := http.NewServeMux()
@@ -43,7 +42,7 @@ func main() {
 	mux.HandleFunc("POST /snippet/create", snippetHandler.Create)
 
 	// SERVER
-	log.Info("starting server", "host", host, "port", port)
-	err := http.ListenAndServe(addr, mux)
+	log.Info("starting server", "addr", *addr)
+	err := http.ListenAndServe(*addr, mux)
 	log.Fatal("server error", err)
 }

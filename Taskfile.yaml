@@ -3,3 +3,4 @@ version: 3
 tasks:
 
   run: 'wgo -file=.go -file=.templ -xfile=_templ.go templ generate :: go run ./cmd'
+  help: go run ./cmd --help
