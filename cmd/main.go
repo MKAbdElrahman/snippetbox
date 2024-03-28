@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/mkabdelrahman/snippetbox/central/errorhandler"
 	"github.com/mkabdelrahman/snippetbox/handler"
 )
 
@@ -24,11 +25,14 @@ func main() {
 		Level: slog.LevelDebug,
 		// AddSource: true,
 	}))
+
+	// ERROR HANDLER
+	centralErrorHandler := errorhandler.NewCentralErrorHandler(logger)
 	// ROUTER
 	mux := http.NewServeMux()
 
 	// home page
-	homeHandler := handler.NewHomeHandler(logger)
+	homeHandler := handler.NewHomeHandler(logger, centralErrorHandler)
 	mux.HandleFunc("GET /{$}", homeHandler.GetHomePage)
 
 	// static files
