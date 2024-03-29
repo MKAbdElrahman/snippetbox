@@ -1,29 +1,30 @@
 package main
 
 import (
-	"flag"
+	"log"
 	"log/slog"
 	"net/http"
 	"os"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/mkabdelrahman/snippetbox/central/errorhandler"
 )
 
 func main() {
 
-	// CONFIG
-	var config struct {
-		addr string
-	}
-
-	flag.StringVar(&config.addr, "addr", ":3000", "HTTP network address")
-	flag.Parse()
-
 	// LOGGER
 	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelDebug,
-		// AddSource: true,
 	}))
+
+	// DATABASE
+	dsn := os.Getenv("DB_DSN_FOR_SERVER")
+	db, err := openDB(dsn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	logger.Info("connected to database")
 
 	// CENTRAL ERROR HANDLER
 	centralErrorHandler := errorhandler.NewCentralErrorHandler(logger)
@@ -31,8 +32,9 @@ func main() {
 	mux := buildApplicationRouter(logger, centralErrorHandler)
 
 	// SERVER
-	logger.Info("starting server", slog.String("addr", config.addr))
-	err := http.ListenAndServe(config.addr, mux)
+	addr := os.Getenv("SERVER_ADDR")
+	logger.Info("starting server", slog.String("addr", addr))
+	err = http.ListenAndServe(addr, mux)
 	logger.Error(err.Error())
 	os.Exit(1)
 }

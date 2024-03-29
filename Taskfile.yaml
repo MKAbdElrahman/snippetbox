@@ -1,6 +1,35 @@
 version: 3
-
+env:
+  MIGRATIONS_DIR: db/migrations
+dotenv: [".env"]
 tasks:
-
-  run: 'wgo -file=.go -file=.templ -xfile=_templ.go templ generate :: go run ./cmd'
+  mysql-up: docker compose -f config/dev/mysql/docker-compose.yaml up -d
+  mysql-down: docker compose -f config/dev/mysql/docker-compose.yaml down
+  mysql-bash: docker compose exec mysql bash -w  config/dev/mysql
+  run: "wgo -file=.go -file=.yaml -file=.templ -xfile=_templ.go templ generate :: go run ./cmd"
   help: go run ./cmd --help
+  migrate-new:
+    desc: task migrate -- [migration_pair_name]
+    cmds:
+      - migrate create -seq -ext=.sql -dir=$MIGRATIONS_DIR {{.CLI_ARGS}}
+  migrate-up:
+    desc: execute migrations
+    cmds:
+      - migrate -path=$MIGRATIONS_DIR -database=$ROOT_DB_DSN_FOR_MIGRATE up
+  migrate-down:
+    desc: down all migrations
+    cmds:
+      - migrate -path=$MIGRATIONS_DIR -database=$ROOT_DB_DSN_FOR_MIGRATE down
+  migrate-goto:
+    desc: migrate to a specific version
+    cmds:
+      - migrate -path=$MIGRATIONS_DIR -database=$ROOT_DB_DSN_FOR_MIGRATE  goto {{.CLI_ARGS}}
+  migrate-force:
+    desc: used for fixing errors in SQL migrations
+    cmds:
+      - migrate -path=$MIGRATIONS_DIR -database=$ROOT_DB_DSN_FOR_MIGRATE force {{.CLI_ARGS}}
+
+  migrate-version:
+    desc: show current version
+    cmds:
+      - migrate -path=$MIGRATIONS_DIR -database=$ROOT_DB_DSN_FOR_MIGRATE version
