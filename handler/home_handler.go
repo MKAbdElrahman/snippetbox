@@ -24,7 +24,7 @@ func (h *HomeHandler) GetHomePage(w http.ResponseWriter, r *http.Request) {
 	component := pages.Home()
 	err := component.Render(context.Background(), w)
 	if err != nil {
-		h.errorHandler.HandleInternalServerError(w, r, err)
+		h.errorHandler.HandleInternalServerError(w, r, err, "")
 		return
 	}
 }

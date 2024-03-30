@@ -6,9 +6,10 @@ import (
 
 	"github.com/mkabdelrahman/snippetbox/central/errorhandler"
 	"github.com/mkabdelrahman/snippetbox/handler"
+	"github.com/mkabdelrahman/snippetbox/service"
 )
 
-func buildApplicationRouter(logger *slog.Logger, centralErrorHandler *errorhandler.CentralErrorHandler) http.Handler {
+func buildApplicationRouter(snippetService *service.SnippetService, logger *slog.Logger, centralErrorHandler *errorhandler.CentralErrorHandler) http.Handler {
 	mux := http.NewServeMux()
 
 	// home page
@@ -20,7 +21,7 @@ func buildApplicationRouter(logger *slog.Logger, centralErrorHandler *errorhandl
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
 	// snippets
-	snippetHandler := handler.NewSnippetHandler(logger)
+	snippetHandler := handler.NewSnippetHandler(snippetService, logger, centralErrorHandler)
 	mux.HandleFunc("GET /snippet/view/{id}", snippetHandler.View)
 	mux.HandleFunc("GET /snippet/create", snippetHandler.ViewCreateForm)
 	mux.HandleFunc("POST /snippet/create", snippetHandler.Create)

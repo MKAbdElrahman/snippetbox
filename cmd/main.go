@@ -8,6 +8,8 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/mkabdelrahman/snippetbox/central/errorhandler"
+	"github.com/mkabdelrahman/snippetbox/db"
+	"github.com/mkabdelrahman/snippetbox/service"
 )
 
 func main() {
@@ -18,18 +20,21 @@ func main() {
 	}))
 
 	// DATABASE
-	dsn := os.Getenv("DB_DSN_FOR_SERVER")
-	db, err := openDB(dsn)
+	dsn := os.Getenv("USER_DB_DSN_FOR_SERVER")
+	dbConn, err := openDB(dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer db.Close()
+	defer dbConn.Close()
 	logger.Info("connected to database")
+	
+	snippetStore := db.NewSnippetStore(dbConn)
+	snippetService := service.NewSnippetService(snippetStore)
 
 	// CENTRAL ERROR HANDLER
 	centralErrorHandler := errorhandler.NewCentralErrorHandler(logger)
 	// ROUTER
-	mux := buildApplicationRouter(logger, centralErrorHandler)
+	mux := buildApplicationRouter(snippetService, logger, centralErrorHandler)
 
 	// SERVER
 	addr := os.Getenv("SERVER_ADDR")
