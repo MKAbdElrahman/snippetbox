@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -11,6 +12,9 @@ import (
 
 func buildApplicationRouter(snippetService *service.SnippetService, logger *slog.Logger, centralErrorHandler *errorhandler.CentralErrorHandler) http.Handler {
 	mux := http.NewServeMux()
+
+	// Health endpoint
+	mux.HandleFunc("/health", httpHealth())
 
 	// home page
 	homeHandler := handler.NewHomeHandler(logger, centralErrorHandler)
@@ -27,4 +31,10 @@ func buildApplicationRouter(snippetService *service.SnippetService, logger *slog
 	mux.HandleFunc("POST /snippet/create", snippetHandler.Create)
 
 	return mux
+}
+
+func httpHealth() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, `{"status":"ok"}`)
+	}
 }
