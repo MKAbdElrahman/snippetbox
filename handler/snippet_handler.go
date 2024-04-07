@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -9,6 +11,7 @@ import (
 	"github.com/mkabdelrahman/snippetbox/central/errorhandler"
 	"github.com/mkabdelrahman/snippetbox/model"
 	"github.com/mkabdelrahman/snippetbox/service"
+	"github.com/mkabdelrahman/snippetbox/view/pages"
 )
 
 type SnippetHandler struct {
@@ -28,13 +31,12 @@ func (h *SnippetHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 
-	params := model.NewSnippetParams{
-		Title:   "Test Snippet",
-		Content: "Content...",
-		Expires: 5,
+	param := model.NewSnippetParams{}
+	err := json.NewDecoder(r.Body).Decode(&param)
+	if err != nil {
+		h.errorHandler.HandleInternalServerError(w, r, err, "server error")
 	}
-
-	snippet, err := h.snippetService.Insert(params)
+	snippet, err := h.snippetService.Insert(param)
 	if err != nil {
 		h.errorHandler.HandleInternalServerError(w, r, err, "server error")
 	}
@@ -60,8 +62,12 @@ func (h *SnippetHandler) View(w http.ResponseWriter, r *http.Request) {
 		h.errorHandler.HandleResourceNotFound(w, r, err, "snippet not found")
 		return
 	}
-	fmt.Fprintf(w, "%+v", *snippet)
-
+	component := pages.Snippet(*snippet)
+	err = component.Render(context.Background(), w)
+	if err != nil {
+		h.errorHandler.HandleInternalServerError(w, r, err, "")
+		return
+	}
 }
 
 func (h *SnippetHandler) ViewCreateForm(w http.ResponseWriter, r *http.Request) {

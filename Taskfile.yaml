@@ -3,10 +3,21 @@ env:
   MIGRATIONS_DIR: db/migrations
 dotenv: [".env"]
 tasks:
+  migrate-install: go install -tags "postgres,mysql,sqlite" github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
   mysql-up: docker compose -f config/dev/mysql/docker-compose.yaml up -d
   mysql-down: docker compose -f config/dev/mysql/docker-compose.yaml down
   mysql-bash: docker compose exec mysql bash -w  config/dev/mysql
-  run: "wgo -file=.go -file=.yaml -file=.templ -xfile=_templ.go templ generate :: go run ./cmd"
+
+  run: "wgo -file=.go -file=.yaml -file=.templ -xfile=_templ.go templ generate :: go run ./cmd/web"
+
+  reset:
+    cmds:
+      - task: migrate-down
+      - task: migrate-up
+      - task: seed
+  seed: go run ./cmd/seed/seed.go
+
   help: go run ./cmd --help
   migrate-new:
     desc: task migrate -- [migration_pair_name]

@@ -21,7 +21,7 @@ func buildApplicationRouter(snippetService *service.SnippetService, logger *slog
 	mux.HandleFunc("GET /{$}", homeHandler.GetHomePage)
 
 	// static files
-	fileServer := http.FileServer(http.Dir("./view/pages/static/"))
+	fileServer := http.FileServer(http.Dir("./view/pages/static_assets/"))
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
 	// snippets
