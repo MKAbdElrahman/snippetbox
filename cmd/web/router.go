@@ -8,6 +8,9 @@ import (
 	"github.com/mkabdelrahman/snippetbox/central/errorhandler"
 	"github.com/mkabdelrahman/snippetbox/handler"
 	"github.com/mkabdelrahman/snippetbox/service"
+
+	"github.com/go-chi/chi/v5/middleware"
+
 )
 
 func buildApplicationRouter(snippetService *service.SnippetService, logger *slog.Logger, centralErrorHandler *errorhandler.CentralErrorHandler) http.Handler {
@@ -31,7 +34,7 @@ func buildApplicationRouter(snippetService *service.SnippetService, logger *slog
 	mux.HandleFunc("GET /snippet/create", snippetHandler.ViewCreateForm)
 	mux.HandleFunc("POST /snippet/create", snippetHandler.Create)
 
-	return mux
+	return  middleware.Logger(mux)
 }
 
 func httpHealth() http.HandlerFunc {

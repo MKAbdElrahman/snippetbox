@@ -27,7 +27,7 @@ templ home(data *HomePageData) {
 			</tr>
 			for _,s := range data.LatestSnippets {
 				<tr>
-					<td><a href="/snippet/view/{s.ID}">{ s.Title }</a></td>
+					<td><a href={ templ.SafeURL(fmt.Sprintf("/snippet/view/%d", s.ID)) }>{ s.Title }</a></td>
 					<td>{ fmt.Sprint(s.Created) }</td>
 					<td>#{ fmt.Sprint(s.ID) }</td>
 				</tr>
