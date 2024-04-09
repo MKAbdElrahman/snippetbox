@@ -15,8 +15,8 @@ templ snippet(s model.Snippet) {
 		</div>
 		<pre><code>{ s.Content }</code></pre>
 		<div class="metadata">
-			<time>Created: { fmt.Sprint(s.Created) }</time>
-			<time>Expires: { fmt.Sprint(s.Expires ) }</time>
+			<time>Created: { humanDate(s.Created) }</time>
+			<time>Expires: { humanDate(s.Expires ) }</time>
 		</div>
 	</div>
 }

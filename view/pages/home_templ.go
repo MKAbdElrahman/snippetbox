@@ -12,6 +12,7 @@ import "bytes"
 
 import "github.com/mkabdelrahman/snippetbox/model"
 import "fmt"
+import "time"
 
 type HomePageData struct {
 	Title          string
@@ -85,7 +86,7 @@ func home(data *HomePageData) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(s.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/home.templ`, Line: 30, Col: 83}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/home.templ`, Line: 31, Col: 83}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -96,9 +97,9 @@ func home(data *HomePageData) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(s.Created))
+				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(humanDate(s.Created))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/home.templ`, Line: 31, Col: 32}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/home.templ`, Line: 32, Col: 31}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -111,7 +112,7 @@ func home(data *HomePageData) templ.Component {
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(s.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/home.templ`, Line: 32, Col: 28}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/home.templ`, Line: 33, Col: 28}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -137,4 +138,8 @@ func home(data *HomePageData) templ.Component {
 		}
 		return templ_7745c5c3_Err
 	})
+}
+
+func humanDate(t time.Time) string {
+	return t.Format("02 Jan 2006 at 15:04")
 }

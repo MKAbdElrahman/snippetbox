@@ -2,6 +2,7 @@ package pages
 
 import "github.com/mkabdelrahman/snippetbox/model"
 import "fmt"
+import "time"
 
 type HomePageData struct {
 	Title          string
@@ -28,7 +29,7 @@ templ home(data *HomePageData) {
 			for _,s := range data.LatestSnippets {
 				<tr>
 					<td><a href={ templ.SafeURL(fmt.Sprintf("/snippet/view/%d", s.ID)) }>{ s.Title }</a></td>
-					<td>{ fmt.Sprint(s.Created) }</td>
+					<td>{ humanDate(s.Created) }</td>
 					<td>#{ fmt.Sprint(s.ID) }</td>
 				</tr>
 			}
@@ -36,4 +37,8 @@ templ home(data *HomePageData) {
 	} else {
 		<p>There's nothing to see here yet!</p>
 	}
+}
+
+func humanDate(t time.Time) string {
+	return t.Format("02 Jan 2006 at 15:04")
 }

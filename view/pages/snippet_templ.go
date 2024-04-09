@@ -94,9 +94,9 @@ func snippet(s model.Snippet) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(s.Created))
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(humanDate(s.Created))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/snippet.templ`, Line: 18, Col: 41}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/snippet.templ`, Line: 18, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -107,9 +107,9 @@ func snippet(s model.Snippet) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(s.Expires))
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(humanDate(s.Expires))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/snippet.templ`, Line: 19, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/snippet.templ`, Line: 19, Col: 41}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
