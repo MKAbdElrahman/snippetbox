@@ -17,7 +17,7 @@ func buildApplicationRouter(snippetService *service.SnippetService, logger *slog
 	mux.HandleFunc("/health", httpHealth())
 
 	// home page
-	homeHandler := handler.NewHomeHandler(logger, centralErrorHandler)
+	homeHandler := handler.NewHomeHandler(snippetService, logger, centralErrorHandler)
 	mux.HandleFunc("GET /{$}", homeHandler.GetHomePage)
 
 	// static files
@@ -27,6 +27,7 @@ func buildApplicationRouter(snippetService *service.SnippetService, logger *slog
 	// snippets
 	snippetHandler := handler.NewSnippetHandler(snippetService, logger, centralErrorHandler)
 	mux.HandleFunc("GET /snippet/view/{id}", snippetHandler.View)
+
 	mux.HandleFunc("GET /snippet/create", snippetHandler.ViewCreateForm)
 	mux.HandleFunc("POST /snippet/create", snippetHandler.Create)
 

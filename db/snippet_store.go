@@ -55,3 +55,30 @@ func (s *SnippetStore) Insert(params model.NewSnippetParams) (*model.Snippet, er
 	}
 	return snippet, nil
 }
+
+func (s *SnippetStore) GetLatestSnippets(limit int) ([]model.Snippet, error) {
+	stmt := `SELECT id, title, content, created, expires FROM snippets
+	WHERE expires > UTC_TIMESTAMP()
+	ORDER BY created DESC
+	LIMIT ?`
+
+	rows, err := s.db.Query(stmt, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	snippets := []model.Snippet{}
+	for rows.Next() {
+		var snippet model.Snippet
+		err := rows.Scan(&snippet.ID, &snippet.Title, &snippet.Content, &snippet.Created, &snippet.Expires)
+		if err != nil {
+			return nil, err
+		}
+		snippets = append(snippets, snippet)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return snippets, nil
+}

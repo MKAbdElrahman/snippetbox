@@ -1,10 +1,39 @@
 package pages
 
-templ Home() {
-	@base("Home - Snippetbox", home())
+import "github.com/mkabdelrahman/snippetbox/model"
+import "fmt"
+
+type HomePageData struct {
+	Title          string
+	LatestSnippets []model.Snippet
 }
 
-templ home() {
-		<h2>Latest Snippets</h2>
+func NewHomePageData() *HomePageData {
+	return &HomePageData{}
+}
+
+templ Home(data *HomePageData) {
+	@base(data.Title, home(data))
+}
+
+templ home(data *HomePageData) {
+	<h2>Latest Snippets</h2>
+	if len(data.LatestSnippets) != 0 {
+		<table>
+			<tr>
+				<th>Title</th>
+				<th>Created</th>
+				<th>ID</th>
+			</tr>
+			for _,s := range data.LatestSnippets {
+				<tr>
+					<td><a href="/snippet/view/{s.ID}">{ s.Title }</a></td>
+					<td>{ fmt.Sprint(s.Created) }</td>
+					<td>#{ fmt.Sprint(s.ID) }</td>
+				</tr>
+			}
+		</table>
+	} else {
 		<p>There's nothing to see here yet!</p>
+	}
 }

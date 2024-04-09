@@ -22,3 +22,7 @@ func (s *SnippetService) GetById(id int) (*model.Snippet, error) {
 func (s *SnippetService) Insert(params model.NewSnippetParams) (*model.Snippet, error) {
 	return s.store.Insert(params)
 }
+
+func (s *SnippetService) GetLatestSnippets(limit int) ([]model.Snippet, error) {
+	return s.store.GetLatestSnippets(limit)
+}
