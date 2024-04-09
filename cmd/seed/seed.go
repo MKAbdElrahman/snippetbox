@@ -12,7 +12,7 @@ import (
 
 func main() {
 
-	endpoint := "http://localhost:3000/snippet/create"
+	endpoint := "http://localhost:3000/api/snippet/create"
 	data1 := model.NewSnippetParams{Title: "Snippet 1", Content: "The content of snippet 1", Expires: 3}
 	data2 := model.NewSnippetParams{Title: "Snippet 2", Content: "Content for snippet 2", Expires: 4}
 

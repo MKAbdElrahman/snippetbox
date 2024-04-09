@@ -29,10 +29,12 @@ func buildApplicationRouter(snippetService *service.SnippetService, logger *slog
 
 	// snippets
 	snippetHandler := handler.NewSnippetHandler(snippetService, logger, centralErrorHandler)
-	mux.HandleFunc("GET /snippet/view/{id}", snippetHandler.View)
+	mux.HandleFunc("GET /snippet/view/{id}", snippetHandler.HandleViewSingleSnippet)
 
-	mux.HandleFunc("GET /snippet/create", snippetHandler.ViewCreateForm)
-	mux.HandleFunc("POST /snippet/create", snippetHandler.Create)
+	mux.HandleFunc("GET /snippet/create", snippetHandler.HandleViewCreateSnippetForm)
+	mux.HandleFunc("POST /snippet/create", snippetHandler.HandleCreateSnippetFromForm)
+
+	mux.HandleFunc("POST /api/snippet/create", snippetHandler.HandleCreateSnippetFromJSON)
 
 	logRequests := middleware.RequestLogger(logger)
 	setCommonHeaders := middleware.CommonHeaders
