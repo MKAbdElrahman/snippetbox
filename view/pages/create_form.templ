@@ -1,0 +1,35 @@
+package pages 
+
+type SnippetCreateFormData struct {
+	Title string
+}
+
+func NewSnippetCreateFormData() *SnippetCreateFormData {
+	return &SnippetCreateFormData{}
+}
+
+templ Form(data *SnippetCreateFormData) {
+	@base(data.Title, form(data))
+}
+
+templ form(data *SnippetCreateFormData) {
+	<form action="/snippet/create" method="POST">
+		<div>
+			<label>Title:</label>
+			<input type="text" name="title"/>
+		</div>
+		<div>
+			<label>Content:</label>
+			<textarea name="content"></textarea>
+		</div>
+		<div>
+			<label>Delete in:</label>
+			<input type="radio" name="expires" value="365" checked/> One Year
+			<input type="radio" name="expires" value="7"/> One Week
+			<input type="radio" name="expires" value="1"/> One Day
+		</div>
+		<div>
+			<input type="submit" value="Publish snippet"/>
+		</div>
+	</form>
+}

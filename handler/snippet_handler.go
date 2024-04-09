@@ -71,7 +71,10 @@ func (h *SnippetHandler) View(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *SnippetHandler) ViewCreateForm(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Display a Form for Creating a New Snippet"))
+	component := pages.Form(pages.NewSnippetCreateFormData())
+	err := component.Render(context.Background(), w)
+	if err != nil {
+		h.errorHandler.HandleInternalServerError(w, r, err, "")
+		return
+	}
 }
-
-
