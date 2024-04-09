@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/justinas/alice"
 	"github.com/mkabdelrahman/snippetbox/central/errorhandler"
 	"github.com/mkabdelrahman/snippetbox/handler"
 	"github.com/mkabdelrahman/snippetbox/handler/middleware"
@@ -36,7 +37,10 @@ func buildApplicationRouter(snippetService *service.SnippetService, logger *slog
 	logRequests := middleware.RequestLogger(logger)
 	setCommonHeaders := middleware.CommonHeaders
 	recoverFormPanics := middleware.PanicRecoverer(centralErrorHandler)
-	return recoverFormPanics(logRequests(setCommonHeaders(mux)))
+
+	applyOnEveryRequest := alice.New(recoverFormPanics, logRequests, setCommonHeaders)
+
+	return applyOnEveryRequest.Then(mux)
 }
 
 func httpHealth() http.HandlerFunc {
