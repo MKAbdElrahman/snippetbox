@@ -33,9 +33,10 @@ func buildApplicationRouter(snippetService *service.SnippetService, logger *slog
 	mux.HandleFunc("GET /snippet/create", snippetHandler.ViewCreateForm)
 	mux.HandleFunc("POST /snippet/create", snippetHandler.Create)
 
-	requestLogger := middleware.RequestLogger(logger)
-	commonHeaders := middleware.CommonHeaders
-	return requestLogger(commonHeaders(mux))
+	logRequests := middleware.RequestLogger(logger)
+	setCommonHeaders := middleware.CommonHeaders
+	recoverFormPanics := middleware.PanicRecoverer(centralErrorHandler)
+	return recoverFormPanics(logRequests(setCommonHeaders(mux)))
 }
 
 func httpHealth() http.HandlerFunc {

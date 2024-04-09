@@ -4,7 +4,6 @@ go 1.22.0
 
 require (
 	github.com/a-h/templ v0.2.648
-	github.com/go-chi/chi/v5 v5.0.12
 	github.com/go-sql-driver/mysql v1.8.1
 )
 
